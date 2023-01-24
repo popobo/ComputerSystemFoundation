@@ -136,5 +136,7 @@ clean:
 
 # CUR_LINE_NUM = $(shell find src/ -regex ".*\.[ch]" | xargs wc -l | grep -E "\d* total" | sed "s/\s\|total//g")
 
+GIT_DIFF = "$(shell git diff --stat f0d41 HEAD | grep "insertions")"
+
 count:
-	@echo $(shell git diff f0d41 HEAD)
+	@echo $(GIT_DIFF)
