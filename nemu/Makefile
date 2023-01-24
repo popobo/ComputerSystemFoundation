@@ -74,8 +74,6 @@ CFLAGS   += -O2 -MMD -Wall -Werror -ggdb3 $(INCLUDES) \
             -D__ENGINE_$(ENGINE)__ \
             -D__ISA__=$(ISA) -D__ISA_$(ISA)__ -D_ISA_H_=\"isa/$(ISA).h\"
 
-$(info $(INCLUDES))
-
 # Files to be compiled
 ifeq ($(TEST_EXPR), YES)
 $(info 1 $(TEST_EXPR))
@@ -101,7 +99,7 @@ $(OBJ_DIR)/%.o: src/%.c
 
 # Some convenient rules
 
-.PHONY: app run gdb clean run-env $(DIFF_REF_SO)
+.PHONY: app run gdb clean run-env $(DIFF_REF_SO) count
 app: $(BINARY)
 
 override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
@@ -112,18 +110,18 @@ IMG :=
 NEMU_EXEC := $(BINARY) $(ARGS) $(IMG)
 
 $(BINARY): $(OBJS)
-	$(call git_commit, "compile")
+	# $(call git_commit, "compile")
 	@echo + LD $@
 	@$(LD) -O2 -rdynamic $(SO_LDLAGS) -o $@ $^ $(LD_LIBS)
 
 run-env: $(BINARY) $(DIFF_REF_SO)
 
 run: run-env
-	$(call git_commit, "run")
+	# $(call git_commit, "run")
 	$(NEMU_EXEC)
 
 gdb: run-env
-	$(call git_commit, "gdb")
+	# $(call git_commit, "gdb")
 	gdb -s $(BINARY) --args $(NEMU_EXEC)
 
 $(DIFF_REF_SO):
@@ -134,3 +132,9 @@ clean:
 	$(MAKE) -C tools/gen-expr clean
 	$(MAKE) -C tools/qemu-diff clean
 	$(MAKE) -C tools/kvm-diff clean
+
+
+# CUR_LINE_NUM = $(shell find src/ -regex ".*\.[ch]" | xargs wc -l | grep -E "\d* total" | sed "s/\s\|total//g")
+
+count:
+	@echo $(shell git diff f0d41 HEAD)
