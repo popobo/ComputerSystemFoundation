@@ -19,3 +19,9 @@ static inline def_EHelper(slti) {
     rtl_li(s, ddest, value);
     print_asm_template3(slti);
 }
+
+static inline def_EHelper(sltiu) {
+    rtlreg_t value = *(id_src1->preg) < id_src2->imm ? 1 : 0;
+    rtl_li(s, ddest, value);
+    print_asm_template3(sltiu);
+}

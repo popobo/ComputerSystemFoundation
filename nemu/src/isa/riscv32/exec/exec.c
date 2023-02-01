@@ -25,6 +25,7 @@ static inline def_EHelper(irii) {
     {
         EX  (0, addi)
         EX  (2, slti)
+        EX  (3, sltiu)
     default:
         exec_inv(s);
     }
