@@ -14,8 +14,8 @@ static inline def_DopHelper(i) {
 
 static inline def_DopHelper(r) {
   op->type = OP_TYPE_REG;
-  op->reg = val;
-  op->preg = &reg_l(val);
+  op->reg = val; // this is the index of reg
+  op->preg = &reg_l(val); //reg(val) is reg and the value of reg
 
   print_Dop(op->str, OP_STR_SIZE, "%s", reg_name(op->reg));
 }
