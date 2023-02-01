@@ -20,7 +20,6 @@ typedef struct {
 } Operand;
 
 typedef struct {
-  // what is opcode? operation code
   uint32_t opcode;
   vaddr_t seq_pc;  // sequential pc
   uint32_t is_jmp;

@@ -79,7 +79,6 @@ ifeq ($(TEST_EXPR), YES)
 $(info 1 $(TEST_EXPR))
 $(shell cp tools/gen-expr/gen-expr.c src/)
 SRCS = $(shell find src/ -name "*.c" | grep -v "isa\|engine\|main.c")
-$(info %(SRCS))
 else
 SRCS = $(shell find src/ -name "*.c" | grep -v "isa\|engine")
 endif
@@ -87,12 +86,16 @@ SRCS += $(shell find src/isa/$(ISA) -name "*.c")
 SRCS += $(shell find src/engine/$(ENGINE) -name "*.c")
 OBJS = $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
 
+$(info $(CFLAGS) $(SO_CFLAGS) )
+
 # Compilation patterns
 $(OBJ_DIR)/%.o: src/%.c
 	@echo + CC $<
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) $(SO_CFLAGS) -c -o $@ $<
-
+	@$(CC) $(CFLAGS) $(SO_CFLAGS) -E -MF /dev/null $< | \
+		grep -ve '^#' | \
+		clang-format - > $(basename $@).i
 
 # Depencies
 -include $(OBJS:.o=.d)
