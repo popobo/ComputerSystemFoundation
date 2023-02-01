@@ -25,3 +25,21 @@ static inline def_EHelper(sltiu) {
     rtl_li(s, ddest, value);
     print_asm_template3(sltiu);
 }
+
+static inline def_EHelper(andi) {
+    rtlreg_t value = *(id_src1->preg) & id_src2->simm;
+    rtl_li(s, ddest, value);
+    print_asm_template3(andi);
+}
+
+static inline def_EHelper(ori) {
+    rtlreg_t value = *(id_src1->preg) | id_src2->simm;
+    rtl_li(s, ddest, value);
+    print_asm_template3(ori);
+}
+
+static inline def_EHelper(xori) {
+    rtlreg_t value = *(id_src1->preg) ^ id_src2->simm;
+    rtl_li(s, ddest, value);
+    print_asm_template3(xori);
+}
