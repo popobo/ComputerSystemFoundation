@@ -23,24 +23,34 @@ static inline def_EHelper(store) {
 static inline def_EHelper(irii) {
     switch (s->isa.instr.i.funct3)
     {
-        EX(0b000, addi)
-        EX(0b010, slti)
-        EX(0b011, sltiu)
-        EX(0b100, xori)
-        EX(0b110, ori)
-        EX(0b111, andi)
-        default:
-            exec_inv(s);
+    EX(0b000, addi)
+    EX(0b010, slti)
+    EX(0b011, sltiu)
+    EX(0b100, xori)
+    EX(0b110, ori)
+    EX(0b111, andi)
+    default:
+        exec_inv(s);
     }
 }
 
-static inline def_EHelper(irro_) {
+static inline def_EHelper(irro_as) {
     switch (s->isa.instr.r.func7)
     {
-        EX(0b0000000, add)
-        EX(0b0100000, sub)
-        default:
-            break;
+    EX(0b0000000, add)
+    EX(0b0100000, sub)
+    default:
+        break;
+    }
+}
+
+static inline def_EHelper(irro_sr) {
+    switch (s->isa.instr.r.func7)
+    {
+    EX(0b0000000, srl);
+    EX(0b0100000, sra);
+    default:
+        break;
     }
 }
 
@@ -48,13 +58,14 @@ static inline def_EHelper(irro_) {
 static inline def_EHelper(irro) {
     switch (s->isa.instr.r.func3)
     {
-        EX(0b000, irro_)
-        EX(0b010, slt)
-        EX(0b100, xor)
-        EX(0b110, or)
-        EX(0b111, and)
-        default:
-            exec_inv(s);
+    EX(0b000, irro_as)
+    EX(0b010, slt)
+    EX(0b100, xor)
+    EX(0b101, irro_sr)
+    EX(0b110, or)
+    EX(0b111, and)
+    default:
+        exec_inv(s);
     }
 }
 

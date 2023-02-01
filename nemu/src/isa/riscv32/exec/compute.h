@@ -72,3 +72,18 @@ static inline def_EHelper(or) {
     *ddest = *dsrc1 | *dsrc2;
     print_asm_template3(or);
 }
+
+static inline def_EHelper(sll) {
+    *ddest = *dsrc1 << (*dsrc2 & 0x1f);
+    print_asm_template3(sll);
+}
+
+static inline def_EHelper(srl) {
+    *ddest = *dsrc1 >> (*dsrc2 & 0x1f);
+    print_asm_template3(srl);
+}
+
+static inline def_EHelper(sra) {
+    *ddest = (int)*dsrc1 >> (*dsrc2 & 0x1f);
+    print_asm_template3(sra);
+}
