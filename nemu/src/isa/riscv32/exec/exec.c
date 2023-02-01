@@ -49,6 +49,7 @@ static inline def_EHelper(irro) {
     switch (s->isa.instr.r.func3)
     {
         EX(0b000, irro_)
+        EX(0b010, slt)
         default:
             exec_inv(s);
     }
