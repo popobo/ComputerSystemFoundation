@@ -19,22 +19,22 @@ static inline def_EHelper(slti) {
 }
 
 static inline def_EHelper(sltiu) {
-    *ddest = *(id_src1->preg) < id_src2->imm ? 1 : 0;
+    *ddest = *dsrc1 < id_src2->imm ? 1 : 0;
     print_asm_template3(sltiu);
 }
 
 static inline def_EHelper(andi) {
-    *ddest = *(id_src1->preg) & id_src2->simm;
+    *ddest = *dsrc1 & id_src2->simm;
     print_asm_template3(andi);
 }
 
 static inline def_EHelper(ori) {
-    *ddest = *(id_src1->preg) | id_src2->simm;
+    *ddest = *dsrc1 | id_src2->simm;
     print_asm_template3(ori);
 }
 
 static inline def_EHelper(xori) {
-    *ddest = *(id_src1->preg) ^ id_src2->simm;
+    *ddest = *dsrc1 ^ id_src2->simm;
     print_asm_template3(xori);
 }
 
@@ -56,4 +56,19 @@ static inline def_EHelper(slt) {
 static inline def_EHelper(sltu) {
     *ddest = (int)(*dsrc1 - *dsrc2) < 0 ? 1 : 0; 
     print_asm_template3(sltu);
+}
+
+static inline def_EHelper(xor) {
+    *ddest  = *dsrc1 ^ *dsrc2;
+    print_asm_template3(xor);
+}
+
+static inline def_EHelper(and) {
+    *ddest = *dsrc1 & *dsrc2;
+    print_asm_template3(and);
+}
+
+static inline def_EHelper(or) {
+    *ddest = *dsrc1 | *dsrc2;
+    print_asm_template3(or);
 }

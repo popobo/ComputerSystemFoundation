@@ -50,6 +50,9 @@ static inline def_EHelper(irro) {
     {
         EX(0b000, irro_)
         EX(0b010, slt)
+        EX(0b100, xor)
+        EX(0b110, or)
+        EX(0b111, and)
         default:
             exec_inv(s);
     }
