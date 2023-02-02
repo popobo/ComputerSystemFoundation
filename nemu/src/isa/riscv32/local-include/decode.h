@@ -1,6 +1,14 @@
 #include <cpu/exec.h>
 #include "rtl.h"
 
+static inline void sext(rtlreg_t *temp, uint32_t width) {
+    int32_t num = *temp;
+    assert(width >= 0 && width <= 32);
+    num = (num) << width;
+    num = (num) >> width;
+    *temp = num;
+}
+
 // decode operand helper
 #define def_DopHelper(name) \
   void concat(decode_op_, name) (DecodeExecState *s, Operand *op, word_t val, bool load_val)
@@ -47,6 +55,15 @@ static inline def_DHelper(R) {
 }
 
 static inline def_DHelper(J) {
+    *t0 = (s->isa.instr.j.simm20 << 20) | 
+          (s->isa.instr.j.imm19_12 << 12) | 
+          (s->isa.instr.j.imm11 << 11) | 
+          (s->isa.instr.j.imm10_1 << 1);
+    
+    sext(t0, 11);
+
+    decode_op_i(s, id_src1, *t0, true);
     decode_op_r(s, id_dest, s->isa.instr.j.rd, true);
-    decode_op_i(s, id_src1, s->isa.instr.j.simm32_12, true);
+
+    print_Dop(id_src1->str, OP_STR_SIZE, "0x%x", *t0);
 }

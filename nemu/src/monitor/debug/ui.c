@@ -346,8 +346,8 @@ static int cmd_testp1(char *args) {
 
 void ui_mainloop() {
   if (is_batch_mode()) {
-    cmd_c(NULL);
-    return;
+    // cmd_c(NULL);
+    // return;
   }
 
   for (char *str; (str = rl_gets()) != NULL; ) {

@@ -4,7 +4,7 @@ static inline def_EHelper(lui) {
 }
 
 static inline def_EHelper(auipc) {
-    rtl_addi(s, (&s->seq_pc), (&s->seq_pc), id_src1->imm);
+    rtl_addi(s, ddest, (&s->seq_pc), id_src1->imm);
     print_asm_template2(auipc);
 }
 
@@ -86,22 +86,4 @@ static inline def_EHelper(srl) {
 static inline def_EHelper(sra) {
     *ddest = (int)*dsrc1 >> (*dsrc2 & 0x1f);
     print_asm_template3(sra);
-}
-
-static inline def_EHelper(jal) {
-    // the last two lines are not executed in this format, why
-    // *ddest = s->seq_pc + 4;
-    // s->is_jmp = true;
-    // s->jmp_pc = s->seq_pc + id_src1->simm;
-    s->is_jmp = true;
-    s->jmp_pc = s->seq_pc + id_src1->simm;
-    *ddest = s->seq_pc + 4;
-    print_asm_template3(jal);
-}
-
-static inline def_EHelper(jalr) {
-    *ddest = s->seq_pc + 4;
-    s->is_jmp = true;
-    s->jmp_pc = (*dsrc1 + id_src2->simm) & ~1;
-    print_asm_template3(jalr);
 }

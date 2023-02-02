@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "vaddr.h": "c",
+        "stdint.h": "c",
+        "string.h": "c",
+        "type_traits": "c",
+        "debug.h": "c",
+        "rtl-basic.h": "c",
+        "common.h": "c",
+        "macro.h": "c"
+    }
+}

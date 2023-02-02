@@ -1,0 +1,39 @@
+{
+    "configurations": [
+        {
+            "name": "C/C++: gcc build and debug active file",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${cwd}/build/riscv32-nemu-interpreter",
+            "args": [ "-b",
+                      "-l ${cwd}/../am-kernels/tests/cpu-tests/build/nemu-log.txt",
+                      "--log=${cwd}/build/nemu-log.txt",
+                      "${cwd}/../am-kernels/tests/cpu-tests/build/dummy-riscv32-nemu.bin",
+                      "--diff=${cwd}/tools/qemu-diff/build/riscv32-qemu-so"
+            ],
+            // "args": [ "--log=${cwd}/build/nemu-log.txt",
+            //           "--diff=${cwd}/tools/qemu-diff/build/riscv32-qemu-so"
+            // ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "make",
+            "miDebuggerPath": "/usr/bin/gdb"
+        }
+    ],
+    "version": "2.0.0"
+}
