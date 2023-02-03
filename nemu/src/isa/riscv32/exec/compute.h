@@ -87,3 +87,22 @@ static inline def_EHelper(sra) {
     *ddest = (int)*dsrc1 >> (*dsrc2 & 0x1f);
     print_asm_template3(sra);
 }
+
+static inline def_EHelper(slli) {
+    // *s0 is shamt
+    *s0 = s->isa.instr.i.simm11_0 & 0x1f;
+    *s1 = s->isa.instr.i.simm11_0 & 0xfe0;
+    *ddest = *dsrc1 << *s0;
+    print_asm_template3(slli);
+}
+
+static inline def_EHelper(srlai) {
+    // *s0 is shamt
+    *s0 = s->isa.instr.i.simm11_0 & 0x1f;
+    *s1 = s->isa.instr.i.simm11_0 & 0xfe0;
+    if (*s1 == 0b0000000) {
+        *ddest = *dsrc1 >> *s0;
+    } else if (*s1 == 0b0100000) {
+        *ddest = (int)*dsrc1 >> *s0;
+    }
+}

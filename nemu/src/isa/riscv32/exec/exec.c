@@ -28,9 +28,11 @@ static inline def_EHelper(irii) {
     switch (s->isa.instr.i.funct3)
     {
     EX(0b000, addi)
+    EX(0b001, slli)
     EX(0b010, slti)
     EX(0b011, sltiu)
     EX(0b100, xori)
+    EX(0b101, srlai)
     EX(0b110, ori)
     EX(0b111, andi)
     default:
