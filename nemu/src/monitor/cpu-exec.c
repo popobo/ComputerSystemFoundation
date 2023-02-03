@@ -99,7 +99,6 @@ void cpu_exec(uint64_t n) {
 
     /* TODO: check watchpoints here. */
 	if (traverse_wp() == true) {
-		nemu_state.state = NEMU_STOP;
 		break;
 	}
 
@@ -117,7 +116,7 @@ void cpu_exec(uint64_t n) {
   g_timer += timer_end - timer_start;
 
   switch (nemu_state.state) {
-    case NEMU_RUNNING: 
+    case NEMU_RUNNING:
 		nemu_state.state = NEMU_STOP;
 		break;
     case NEMU_END: case NEMU_ABORT:

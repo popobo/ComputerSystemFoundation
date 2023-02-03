@@ -99,7 +99,8 @@ static inline def_EHelper(slli) {
 static inline def_EHelper(srlai) {
     // *s0 is shamt
     *s0 = s->isa.instr.i.simm11_0 & 0x1f;
-    *s1 = s->isa.instr.i.simm11_0 & 0xfe0;
+    *s1 = (s->isa.instr.i.simm11_0 & 0xfe0) >> 5;
+    
     if (*s1 == 0b0000000) {
         *ddest = *dsrc1 >> *s0;
     } else if (*s1 == 0b0100000) {

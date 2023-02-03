@@ -8,9 +8,11 @@ static inline void set_width(DecodeExecState *s, int width) {
 
 static inline def_EHelper(load) {
   switch (s->isa.instr.i.funct3) {
-    EXW(0b000, ld, 1)
-    EXW(0b001, ld, 2)
-    EXW(0b010, ld, 4)
+    EXW(0b000, lds, 1); //lb
+    EXW(0b001, lds, 2); //lh
+    EXW(0b010, ld, 4) //lw
+    EXW(0b100, ld, 1) //lbu
+    EXW(0b101, ld, 2) //lhu
     default: exec_inv(s);
   }
 }
@@ -82,8 +84,10 @@ static inline def_EHelper(cbi) {
     switch (s->isa.instr.b.func3)
     {
     EX(0b000, beq)
+    EX(0b001, bne)
     default:
-        break;
+        // this is required for detecting unimplemented instruction
+        exec_inv(s);
     }
 }
 
@@ -92,6 +96,10 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
   // pc is 4 bytes(32bits)
   // val is the same as opcode1_0 because of union
   s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
+  printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+  if (cpu.pc == 0x8010006c) {
+        printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+  }
   Assert(s->isa.instr.i.opcode1_0 == 0x3, "Invalid instruction");
   switch (s->isa.instr.i.opcode6_2) {
     IDEX (0b00000, I, load)

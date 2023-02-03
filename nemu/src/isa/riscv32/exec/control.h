@@ -24,3 +24,11 @@ static inline def_EHelper(beq) {
         print_asm_template3(beq);
     }
 }
+
+static inline def_EHelper(bne) {
+    if (*dsrc1 != *dsrc2) {
+        s->is_jmp = true;
+        s->jmp_pc = cpu.pc + id_dest->simm;
+        print_asm_template3(bne);
+    }
+}
