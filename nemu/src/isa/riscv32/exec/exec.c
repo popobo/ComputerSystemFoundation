@@ -70,6 +70,16 @@ static inline def_EHelper(irro) {
     }
 }
 
+// Conditional Branches Instructions
+static inline def_EHelper(cbi) {
+    switch (s->isa.instr.b.func3)
+    {
+    EX(0b000, beq)
+    default:
+        break;
+    }
+}
+
 static inline void fetch_decode_exec(DecodeExecState *s) {
   // fetch instruction
   // pc is 4 bytes(32bits)
@@ -85,6 +95,7 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
     IDEX (0b01100, R, irro)
     IDEX (0b11011, J, jal)
     IDEX (0b11001, I, jalr)
+    IDEX (0b11000, B, cbi)
     EX   (0b11010, nemu_trap)
     default: exec_inv(s);
   }
