@@ -5,10 +5,10 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${cwd}/build/riscv32-nemu-interpreter",
-            "args": [ "-b",
+            "args": [ 
                       "-l ${cwd}/../am-kernels/tests/cpu-tests/build/nemu-log.txt",
                       "--log=${cwd}/build/nemu-log.txt",
-                      "${cwd}/../am-kernels/tests/cpu-tests/build/add-riscv32-nemu.bin",
+                      "${cwd}/../am-kernels/tests/cpu-tests/build/add-longlong-riscv32-nemu.bin",
                       "--diff=${cwd}/tools/qemu-diff/build/riscv32-qemu-so"
             ],
             // "args": [ "--log=${cwd}/build/nemu-log.txt",

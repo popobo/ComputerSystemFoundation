@@ -49,12 +49,12 @@ static inline def_EHelper(sub) {
 }
 
 static inline def_EHelper(slt) {
-    *ddest = ((int)*dsrc1 - (int)*dsrc2) < 0 ? 1 : 0;
+    *ddest = (int)*dsrc1 < (int)*dsrc2 ? 1 : 0;
     print_asm_template3(slt);
 }
 
 static inline def_EHelper(sltu) {
-    *ddest = (int)(*dsrc1 - *dsrc2) < 0 ? 1 : 0; 
+    *ddest = *dsrc1 < *dsrc2 ? 1 : 0; 
     print_asm_template3(sltu);
 }
 
