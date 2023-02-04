@@ -37,45 +37,55 @@ static inline def_EHelper(irii) {
     EX(0b101, srlai)
     EX(0b110, ori)
     EX(0b111, andi)
-    default:
-        exec_inv(s);
+    default: exec_inv(s);
     }
 }
 
-static inline def_EHelper(irro_as) {
-    switch (s->isa.instr.r.func7)
-    {
-    EX(0b0000000, add)
-    EX(0b0100000, sub)
-    default:
-        break;
+static inline def_EHelper(irro_func7_0) {
+    switch (s->isa.instr.r.func3) {
+    EX(0b000, add)
+    EX(0b001, sll)
+    EX(0b010, slt)
+    EX(0b011, sltu)
+    EX(0b100, xor)
+    EX(0b101, srl)
+    EX(0b110, or)
+    EX(0b111, and)
+    default: exec_inv(s);
     }
 }
 
-static inline def_EHelper(irro_sr) {
-    switch (s->isa.instr.r.func7)
-    {
-    EX(0b0000000, srl);
-    EX(0b0100000, sra);
-    default:
-        break;
+static inline def_EHelper(irro_func7_32) {
+    switch (s->isa.instr.r.func3) {
+    EX(0b000, sub)
+    EX(0b101, sra)
+    default: exec_inv(s);
+    }
+}
+
+
+static inline def_EHelper(irro_func7_1) {
+    switch (s->isa.instr.r.func3) {
+    EX(0b000, mul) //mul s * s
+    EX(0b001, mulh) //mulh us * us >> 32
+    EX(0b010, mulhsu) //mulhsu
+    EX(0b011, mulhu) //mulhu
+    EX(0b100, div)
+    EX(0b101, divu)
+    EX(0b110, rem)
+    EX(0b111, remu)
+    default: exec_inv(s);
     }
 }
 
 // Integer Register-Register Operations
 static inline def_EHelper(irro) {
-    switch (s->isa.instr.r.func3)
+    switch (s->isa.instr.r.func7)
     {
-    EX(0b000, irro_as)
-    EX(0b001, sll)
-    EX(0b010, slt)
-    EX(0b011, sltu)
-    EX(0b100, xor)
-    EX(0b101, irro_sr)
-    EX(0b110, or)
-    EX(0b111, and)
-    default:
-        exec_inv(s);
+    EX(0b0000000, irro_func7_0)
+    EX(0b0100000, irro_func7_32)
+    EX(0b0000001, irro_func7_1)
+    default: exec_inv(s);
     }
 }
 
@@ -89,9 +99,7 @@ static inline def_EHelper(cbi) {
     EX(0b101, bge)
     EX(0b110, bltu)
     EX(0b111, bgeu)
-    default:
-        // this is required for detecting unimplemented instruction
-        exec_inv(s);
+    default: exec_inv(s);
     }
 }
 
@@ -101,7 +109,7 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
   // val is the same as opcode1_0 because of union
   s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
   printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-  if (cpu.pc == 0x8010006c) {
+  if (cpu.pc == 0x80100074) {
         printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
   }
   Assert(s->isa.instr.i.opcode1_0 == 0x3, "Invalid instruction");
