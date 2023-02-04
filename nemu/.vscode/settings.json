@@ -8,6 +8,7 @@
         "rtl-basic.h": "c",
         "common.h": "c",
         "macro.h": "c",
-        "rtl.h": "c"
+        "rtl.h": "c",
+        "pseudo.h": "c"
     }
 }

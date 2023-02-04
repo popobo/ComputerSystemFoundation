@@ -19,16 +19,42 @@ static inline def_EHelper(jalr) {
 
 static inline def_EHelper(beq) {
     if (*dsrc1 == *dsrc2) {
-        s->is_jmp = true;
-        s->jmp_pc = cpu.pc + id_dest->simm;
+        rtl_brc(s, id_dest->simm);
         print_asm_template3(beq);
     }
 }
 
 static inline def_EHelper(bne) {
     if (*dsrc1 != *dsrc2) {
-        s->is_jmp = true;
-        s->jmp_pc = cpu.pc + id_dest->simm;
+        rtl_brc(s, id_dest->simm);
         print_asm_template3(bne);
+    }
+}
+
+static inline def_EHelper(blt) {
+    if ((int)*dsrc1 < (int)*dsrc2) {
+        rtl_brc(s, id_dest->simm);
+        print_asm_template3(blt);
+    }
+}
+
+static inline def_EHelper(bltu) {
+    if (*dsrc1 < *dsrc2) {
+        rtl_brc(s, id_dest->simm);
+        print_asm_template3(bltu);
+    }
+}
+
+static inline def_EHelper(bge) {
+    if ((int)*dsrc1 >= (int)*dsrc2) {
+        rtl_brc(s, id_dest->simm);
+        print_asm_template3(bge);
+    }
+}
+
+static inline def_EHelper(bgeu) {
+    if (*dsrc1 >= *dsrc2) {
+        rtl_brc(s, id_dest->simm);
+        print_asm_template3(bgeu);
     }
 }

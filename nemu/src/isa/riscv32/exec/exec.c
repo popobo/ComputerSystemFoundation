@@ -85,6 +85,10 @@ static inline def_EHelper(cbi) {
     {
     EX(0b000, beq)
     EX(0b001, bne)
+    EX(0b100, blt)
+    EX(0b101, bge)
+    EX(0b110, bltu)
+    EX(0b111, bgeu)
     default:
         // this is required for detecting unimplemented instruction
         exec_inv(s);
