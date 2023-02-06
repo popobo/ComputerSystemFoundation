@@ -111,10 +111,6 @@ void* memmove(void* dst,const void* src,size_t n) {
 void* memcpy(void* dst, const void* src, size_t n) {
     char *cdst = (char *)dst;
     char *csrc = (char *)src;
-    
-    if (src + n > dst) {
-        return NULL;
-    }
 
     for (size_t i = 0; i < n; ++i) {
         cdst[i] = csrc[i];
