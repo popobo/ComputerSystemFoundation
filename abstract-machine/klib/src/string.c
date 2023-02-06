@@ -108,13 +108,18 @@ void* memmove(void* dst,const void* src,size_t n) {
     return dst;
 }
 
-void* memcpy(void* out, const void* in, size_t n) {
-    char *cout = (char *)out;
-    char *cin = (char *)in;
-    for (size_t i = 0; i < n; ++i) {
-        cout[i] = cin[i];
+void* memcpy(void* dst, const void* src, size_t n) {
+    char *cdst = (char *)dst;
+    char *csrc = (char *)src;
+    
+    if (src + n > dst) {
+        return NULL;
     }
-    return cout;
+
+    for (size_t i = 0; i < n; ++i) {
+        cdst[i] = csrc[i];
+    }
+    return dst;
 }
 
 int memcmp(const void* s1, const void* s2, size_t n) {
