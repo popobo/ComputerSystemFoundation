@@ -41,11 +41,30 @@ void test_strlen() {
     }
 }
 
+void test_memcmp() {
+    uint8_t data[N];
+    int l, r;
+    int cmp_ret = 0;
+
+    for (l = 0; l < N; ++l) {
+        for (r = l + 1; r <= N; ++r) {
+            reset(global_data);
+            uint8_t val = (l + r) / 2;
+            memset(global_data + l, val, r - l);
+            memcpy(data + l, global_data + l, r - l);
+            cmp_ret = memcmp(data + l, global_data + l, r - l);
+            assert(cmp_ret == 0);
+            check_eq(l, r, val, data);
+        }
+    }
+}
+
 int main() {
 
     test_memset();
     test_memcpy();
     test_strlen();
+    test_memcmp();
 
     return 0;
 }
