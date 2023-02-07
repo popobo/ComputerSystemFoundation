@@ -48,15 +48,17 @@ char* strcat(char* dst, const char* src) {
 int strcmp(const char* s1, const char* s2) {
     size_t offset = 0;
     int result = 0;
-    while (s1[offset] != '\0' && s2[offset] != '\0') {
-        result = s1[offset] - s2[offset];
+    unsigned char *us1 = s1;
+    unsigned char *us2 = s2;
+    while (us1[offset] != '\0' && us2[offset] != '\0') {
+        result = us1[offset] - us2[offset];
         if (result != 0) {
             break;
         }
         offset++;
     }
 
-    result = s1[offset] - s2[offset];
+    result = us1[offset] - us2[offset];
 
     return result;
 }
@@ -64,15 +66,17 @@ int strcmp(const char* s1, const char* s2) {
 int strncmp(const char* s1, const char* s2, size_t n) {
     int result = 0;
     size_t i = 0;
-    for (i = 0; i < n && s1[i] != '\0' && s2[i] != 0; ++i) {
-        result = s1[i] - s2[i];
+    unsigned char *us1 = s1;
+    unsigned char *us2 = s2;
+    for (i = 0; i < n && us1[i] != '\0' && us2[i] != 0; ++i) {
+        result = us1[i] - us2[i];
         if (result != 0) {
             break;
         }
     }
 
-    if ((i != n) && (s1[i] == '\0' || s2[i] == '\0')) {
-        result = s1[i] - s2[i];
+    if ((i != n) && (us1[i] == '\0' || us2[i] == '\0')) {
+        result = us1[i] - us2[i];
     }
 
     return result;
