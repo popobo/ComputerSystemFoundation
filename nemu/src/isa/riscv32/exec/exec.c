@@ -108,10 +108,10 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
   // pc is 4 bytes(32bits)
   // val is the same as opcode1_0 because of union
   s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
-  printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-  if (cpu.pc == 0x80100074) {
-        printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-  }
+//   printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+//   if (cpu.pc == 0x80100074) {
+//         printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+//   }
   Assert(s->isa.instr.i.opcode1_0 == 0x3, "Invalid instruction");
   switch (s->isa.instr.i.opcode6_2) {
     IDEX (0b00000, I, load)

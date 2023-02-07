@@ -9,6 +9,7 @@
         "common.h": "c",
         "macro.h": "c",
         "rtl.h": "c",
-        "pseudo.h": "c"
+        "pseudo.h": "c",
+        "riscv32.h": "c"
     }
 }
