@@ -76,12 +76,79 @@ void test_memcmp() {
     }
 }
 
+void test_strcmp(){
+    char *str1 = "abcdef";
+    char *str2 = "abcde";
+    char *str3 = "abcdefg";
+    char *str4 = "abcdef";
+    char *str5 = "";
+
+    int cmp_ret = 0;
+    
+    cmp_ret = strcmp(str1, str2);
+    assert(cmp_ret > 0);
+
+    cmp_ret = strcmp(str1, str3);
+    assert(cmp_ret < 0);
+    
+    cmp_ret = strcmp(str1, str4);
+    assert(cmp_ret == 0);
+
+    cmp_ret = strcmp(str1, str5);
+    assert(cmp_ret > 0);
+
+    cmp_ret = strcmp(str5, str1);
+    assert(cmp_ret < 0);
+}
+
+void test_strncmp() {
+    char *str1 = "abcdef";
+    char *str2 = "abcde";
+    char *str3 = "abcdefg";
+    char *str4 = "abcdef";
+    char *str5 = "";
+    char *str6 = "";
+
+    int cmp_ret = 0;
+
+    //max length 8
+    cmp_ret = strncmp(str1, str2, 8);
+    assert(cmp_ret > 0);
+
+    cmp_ret = strncmp(str1, str3, 8);
+    assert(cmp_ret < 0);
+    
+    cmp_ret = strncmp(str1, str4, 8);
+    assert(cmp_ret == 0);
+
+    cmp_ret = strncmp(str1, str5, 8);
+    assert(cmp_ret > 0);
+
+    cmp_ret = strncmp(str5, str1, 8);
+    assert(cmp_ret < 0);
+
+    cmp_ret = strncmp(str1, str2, strlen(str2));
+    assert(cmp_ret == 0);
+
+    cmp_ret = strncmp(str1, str3, strlen(str1));
+    assert(cmp_ret == 0);
+
+    cmp_ret = strncmp(str1, str5, strlen(str5));
+    assert(cmp_ret == 0);
+
+    cmp_ret = strncmp(str5 ,str6, strlen(str6));
+    assert(cmp_ret == 0);
+}
+
+
 int main() {
 
     test_memset();
     test_memcpy();
     test_strlen();
     test_memcmp();
+    test_strcmp();
+    test_strncmp();
 
     return 0;
 }

@@ -48,8 +48,8 @@ char* strcat(char* dst, const char* src) {
 int strcmp(const char* s1, const char* s2) {
     size_t offset = 0;
     int result = 0;
-    unsigned char *us1 = s1;
-    unsigned char *us2 = s2;
+    unsigned char *us1 = (unsigned char*)s1;
+    unsigned char *us2 = (unsigned char*)s2;
     while (us1[offset] != '\0' && us2[offset] != '\0') {
         result = us1[offset] - us2[offset];
         if (result != 0) {
@@ -66,8 +66,8 @@ int strcmp(const char* s1, const char* s2) {
 int strncmp(const char* s1, const char* s2, size_t n) {
     int result = 0;
     size_t i = 0;
-    unsigned char *us1 = s1;
-    unsigned char *us2 = s2;
+    unsigned char *us1 = (unsigned char*)s1;
+    unsigned char *us2 = (unsigned char*)s2;
     for (i = 0; i < n && us1[i] != '\0' && us2[i] != 0; ++i) {
         result = us1[i] - us2[i];
         if (result != 0) {
