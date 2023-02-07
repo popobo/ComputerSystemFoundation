@@ -19,6 +19,11 @@ static inline int itoa(int num, char *dest, int base) {
     int rem = 0;
     char neg_flag = 0;
     
+    if (num == 0) {
+        dest[offset++] = '0';
+        return offset;
+    }
+
     if (num < 0) {
         neg_flag = 1;
         dest[offset++] = '-';

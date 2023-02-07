@@ -1,3 +1,4 @@
+#include "limits.h"
 #include "check_function.h"
 
 void test_memset() {
@@ -101,6 +102,37 @@ void test_strcmp(){
     assert(cmp_ret < 0);
 }
 
+void test_generate_targets_for_sprintf() {
+    int data[] = { 0, INT_MAX / 17, INT_MAX, INT_MIN, INT_MIN + 1, UINT_MAX / 17, INT_MAX / 17, UINT_MAX };
+    
+    for (int i = 0; i < sizeof(data) / sizeof(data[0]); ++i) {
+        printf("aa %d aa\n", data[i]);
+    }
+}
+
+void test_sprintf() {
+    
+    char *str[] = { "aa 0 aa",
+                    "aa 126322567 aa", 
+                    "aa 2147483647 aa",
+                    "aa -2147483648 aa", 
+                    "aa -2147483647 aa",
+                    "aa 252645135 aa",
+                    "aa 126322567 aa",
+                    "aa -1 aa" };
+
+    int data[] = { 0, INT_MAX / 17, INT_MAX, INT_MIN, INT_MIN + 1, UINT_MAX / 17, INT_MAX / 17, UINT_MAX };
+
+    int cmp_ret = 0;
+
+    char buf[1024] = {0};
+    for (int i = 0; i < sizeof(data) / sizeof(data[0]); ++i) {
+        sprintf(buf, "aa %d aa", data[i]);
+        cmp_ret = strcmp(buf, str[i]);
+        assert(cmp_ret == 0);
+    }
+}
+
 void test_strncmp() {
     char *str1 = "abcdef";
     char *str2 = "abcde";
@@ -149,6 +181,7 @@ int main() {
     test_memcmp();
     test_strcmp();
     test_strncmp();
+    test_sprintf();
 
     return 0;
 }
