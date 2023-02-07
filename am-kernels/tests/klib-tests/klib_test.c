@@ -54,7 +54,24 @@ void test_memcmp() {
             memcpy(data + l, global_data + l, r - l);
             cmp_ret = memcmp(data + l, global_data + l, r - l);
             assert(cmp_ret == 0);
-            check_eq(l, r, val, data);
+        }
+    }
+
+    for (l = 0; l < N; ++l) {
+        for (r = l + 1; r <= N; ++r) {
+            reset(global_data);
+            reset(data);
+            uint8_t val = (l + r) / 2;
+            memset(global_data + l, val, r - l);
+            memcpy(data + l, global_data + l, r - l);
+            data[(l + r) / 2] += 1;
+            cmp_ret = memcmp(data + l, global_data + l, r - l);
+            assert(cmp_ret > 0);
+            if (data[(l + r) / 2] > 1) {
+                data[(l + r) / 2] -= 2;
+                cmp_ret = memcmp(data + l, global_data + l, r - l);
+                assert(cmp_ret < 0);
+            }
         }
     }
 }

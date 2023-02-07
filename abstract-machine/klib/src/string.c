@@ -119,8 +119,8 @@ void* memcpy(void* dst, const void* src, size_t n) {
 }
 
 int memcmp(const void* s1, const void* s2, size_t n) {
-    char *cs1 = (char *)s1;
-    char *cs2 = (char *)s2;
+    uint8_t *cs1 = (uint8_t *)s1;
+    uint8_t *cs2 = (uint8_t *)s2;
     int result = 0;
 
     for (int i = 0; i < n; ++i) {
