@@ -8,7 +8,7 @@
 #define PRINT_BUF_SIZE 1024
 
 // current only support Decimal
-static inline int itoa(int num, char *dest, int base) {
+static inline int itoa(int64_t num, char *dest, int base) {
     int offset = 0;
     int rem = 0;
     char neg_flag = 0;
@@ -48,7 +48,7 @@ static inline int printf_tool(char *out, const char *fmt, va_list args) {
     size_t out_index = 0;
     int cmp = 0;
 
-    int integer = 0;
+    int64_t integer = 0;
     int length_integer_str = 0;
 
     char * str = NULL;
@@ -65,6 +65,19 @@ static inline int printf_tool(char *out, const char *fmt, va_list args) {
             
             out_index += length_integer_str;
             fmt_index += 2;
+
+            continue;
+        }
+
+        cmp = strncmp(fmt + fmt_index, "%ld", 3);
+        if (0 == cmp) {
+            
+            integer = va_arg(args, int64_t);
+            length_integer_str = itoa(integer, temp_buf, 10);
+            strcpy(out + out_index, temp_buf);
+            
+            out_index += length_integer_str;
+            fmt_index += 3;
 
             continue;
         }
