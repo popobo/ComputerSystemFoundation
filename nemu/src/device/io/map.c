@@ -11,7 +11,7 @@ static uint8_t *p_space = io_space;
 uint8_t* new_space(int size) {
   uint8_t *p = p_space;
   // page aligned;
-  size = (size + (PAGE_SIZE - 1)) & ~PAGE_MASK;
+  size = (size + (PAGE_SIZE - 1)) & ~PAGE_MASK; // size = 8, (8 + 0x00001000) & ~(0x00000fff), 0x00001008 & 0xfffff000 = 0x00001000
   p_space += size;
   assert(p_space - io_space < IO_SPACE_MAX);
   return p;

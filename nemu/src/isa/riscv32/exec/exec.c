@@ -109,23 +109,23 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
   // val is the same as opcode1_0 because of union
   s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
 //   printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-//   if (cpu.pc == 0x80100074) {
-//         printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-//   }
-  Assert(s->isa.instr.i.opcode1_0 == 0x3, "Invalid instruction");
-  switch (s->isa.instr.i.opcode6_2) {
-    IDEX (0b00000, I, load)
-    IDEX (0b01000, S, store)
-    IDEX (0b01101, U, lui)
-    IDEX (0b00101, U, auipc)
-    IDEX (0b00100, I, irii)
-    IDEX (0b01100, R, irro)
-    IDEX (0b11011, J, jal)
-    IDEX (0b11001, I, jalr)
-    IDEX (0b11000, B, cbi)
-    EX   (0b11010, nemu_trap)
-    default: exec_inv(s);
-  }
+    // if (cpu.pc == 0x801000c0) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+    Assert(s->isa.instr.i.opcode1_0 == 0x3, "Invalid instruction");
+    switch (s->isa.instr.i.opcode6_2) {
+        IDEX (0b00000, I, load)
+        IDEX (0b01000, S, store)
+        IDEX (0b01101, U, lui)
+        IDEX (0b00101, U, auipc)
+        IDEX (0b00100, I, irii)
+        IDEX (0b01100, R, irro)
+        IDEX (0b11011, J, jal)
+        IDEX (0b11001, I, jalr)
+        IDEX (0b11000, B, cbi)
+        EX   (0b11010, nemu_trap)
+        default: exec_inv(s);
+    }
 }
 
 static inline void reset_zero() {
