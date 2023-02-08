@@ -4,14 +4,8 @@
 #include <stdarg.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
-
-int printf(const char *fmt, ...) {
-  return 0;
-}
-
-int vsprintf(char *out, const char *fmt, va_list ap) {
-  return 0;
-}
+ 
+#define PRINT_BUF_SIZE 1024
 
 // current only support Decimal
 static inline int itoa(int num, char *dest, int base) {
@@ -48,9 +42,8 @@ static inline int itoa(int num, char *dest, int base) {
     return offset;
 }
 
-int sprintf(char *out, const char *fmt, ...) {
-    va_list ap;
 
+static inline int printf_tool(char *out, const char *fmt, va_list args) {
     size_t fmt_index = 0;
     size_t out_index = 0;
     int cmp = 0;
@@ -60,15 +53,13 @@ int sprintf(char *out, const char *fmt, ...) {
 
     char * str = NULL;
     
-
-    va_start(ap, fmt);
     char temp_buf[128] = {0};
 
     while (fmt[fmt_index] != '\0') {
         cmp = strncmp(fmt + fmt_index, "%d", 2);
         if (0 == cmp) {
             
-            integer = va_arg(ap, int);
+            integer = va_arg(args, int);
             length_integer_str = itoa(integer, temp_buf, 10);
             strcpy(out + out_index, temp_buf);
             
@@ -81,7 +72,7 @@ int sprintf(char *out, const char *fmt, ...) {
         cmp = strncmp(fmt + fmt_index, "%s", 2);
         if (0 == cmp) {
             
-            str = va_arg(ap, char *);
+            str = va_arg(args, char *);
             strcpy(out + out_index, str);
             out_index += strlen(str);
             fmt_index += 2;
@@ -99,8 +90,40 @@ int sprintf(char *out, const char *fmt, ...) {
     return out_index;
 }
 
-int snprintf(char *out, size_t n, const char *fmt, ...) {
+int printf(const char *fmt, ...) {
+    char buf[PRINT_BUF_SIZE] = {0};
+    
+    size_t out_index = 0;
+
+    va_list(args);
+    va_start(args, fmt);
+
+    out_index = printf_tool(buf, fmt, args);
+
+    putstr(buf);
+
+    va_end(args);
+
+    return out_index;
+}
+
+int vsprintf(char *out, const char *fmt, va_list ap) {
   return 0;
+}
+
+int sprintf(char *out, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    size_t out_index = printf_tool(out, fmt, args);
+    
+    va_end(args);
+
+    return out_index;
+}
+
+int snprintf(char *out, size_t n, const char *fmt, ...) {
+    return 0;
 }
 
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {

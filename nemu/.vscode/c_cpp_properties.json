@@ -11,7 +11,7 @@
                 "__ENGINE_interpreter__",
                 "__ISA__=riscv32",
                 "__ISA_riscv32__",
-                "_ISA_H_=\"isa/riscv32.h\""
+            "_ISA_H_=\"isa/riscv32.h\""
             ],
             "compilerPath": "/usr/bin/gcc",
             "cppStandard": "c++14",
