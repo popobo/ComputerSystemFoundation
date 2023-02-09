@@ -32,16 +32,18 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 }
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
-    int index = 0;
-    for (int x = ctl->x; x < (ctl->x + ctl->w) && x < initial_width; ++x) {
-        for (int y = ctl->y; y < (ctl->y + ctl->h) && y < initial_height; ++y) {
+    int index = 0;    
+    //虽然都会填上，但和pixels原本的排序不一致
+    for (int y = ctl->y; y < (ctl->y + ctl->h) && y < initial_height; ++y) {
+        for (int x = ctl->x; x < (ctl->x + ctl->w) && x < initial_width; ++x) {
             if (NULL == ctl->pixels) {
                 break;
             }
             size_t color_size = sizeof(uint32_t);
-            outl(FB_ADDR + y * initial_width * color_size + x * color_size, ((uint32_t *)ctl->pixels)[index++]);//(((uint32_t**)ctl->pixels)[x][y]));
+            outl(FB_ADDR + y * initial_width * color_size + x * color_size, ((uint32_t *)ctl->pixels)[index++]);
         }
     }
+
     if (ctl->sync) {
         outl(SYNC_ADDR, 1);
     }
