@@ -14,6 +14,8 @@
         "sdl.h": "c",
         "log.h": "c",
         "map.h": "c",
-        "difftest.h": "c"
+        "difftest.h": "c",
+        "typeinfo": "c",
+        "stdlib.h": "c"
     }
 }

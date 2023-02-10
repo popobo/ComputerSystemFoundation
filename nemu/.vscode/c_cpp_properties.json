@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/tools/qemu-diff/include/**"
+                "${workspaceFolder}/tools/qemu-diff/include/**",
+                "${workspaceFolder}/include/**"
             ],
             "defines": [
                 "__DIFF_REF_QEMU__",

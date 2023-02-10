@@ -110,8 +110,6 @@ static int cmd_si(char *args) {
 	long steps = 0;
 	
 	steps = args != NULL ? strtol(args, NULL, 10) : 1;
-
-	Log("steps: %ld", steps);
 	
 	if (steps <= 0) {
 		steps = 1;

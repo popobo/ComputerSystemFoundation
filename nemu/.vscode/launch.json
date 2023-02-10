@@ -6,7 +6,6 @@
             "request": "launch",
             "program": "${cwd}/build/riscv32-nemu-interpreter",
             "args": [ 
-                      "-b",
                       "-l ${cwd}/../am-kernels/tests/cpu-tests/build/nemu-log.txt",
                       "--log=${cwd}/build/nemu-log.txt",
                       "${cwd}/../am-kernels/tests/am-tests/build/amtest-riscv32-nemu.bin",
