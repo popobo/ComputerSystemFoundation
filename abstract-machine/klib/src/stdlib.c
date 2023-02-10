@@ -2,8 +2,6 @@
 #include <klib.h>
 #include <klib-macros.h>
 
-static char * hbrk = NULL;
-
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 static unsigned long int next = 1;
 
@@ -32,6 +30,7 @@ int atoi(const char* nptr) {
 }
 
 void *malloc(size_t size) {
+    static char * hbrk = NULL;
     if (NULL == hbrk) {
         hbrk = (char *)ROUNDUP(heap.start, 8);
     }

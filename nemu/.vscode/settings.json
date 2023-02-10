@@ -11,6 +11,9 @@
         "rtl.h": "c",
         "pseudo.h": "c",
         "riscv32.h": "c",
-        "sdl.h": "c"
+        "sdl.h": "c",
+        "log.h": "c",
+        "map.h": "c",
+        "difftest.h": "c"
     }
 }
