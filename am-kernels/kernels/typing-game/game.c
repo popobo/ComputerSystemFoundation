@@ -26,7 +26,7 @@ int min(int a, int b) {
 }
 
 int randint(int l, int r) {
-  return l + (rand() & 0x7fffffff) % (r - l + 1);
+return l + (rand() & 0x7fffffff) % (r - l + 1);
 }
 
 void new_char() {
@@ -36,6 +36,7 @@ void new_char() {
       c->ch = 'A' + randint(0, 25);
       c->x = randint(0, screen_w - CHAR_W);
       c->y = 0;
+      // v is speed
       c->v = (screen_h - CHAR_H + 1) / randint(FPS * 3 / 2, FPS * 2);
       c->t = 0;
       return;
@@ -44,23 +45,30 @@ void new_char() {
 }
 
 void game_logic_update(int frame) {
+    // gennerate a new char every 6 frame
   if (frame % (FPS / CPS) == 0) new_char();
+  // update every existing character according to frame index
   for (int i = 0; i < LENGTH(chars); i++) {
     struct character *c = &chars[i];
+    //c->ch != '\0'
     if (c->ch) {
       if (c->t > 0) {
         if (--c->t == 0) {
+            // time of a char is 0, erase it
           c->ch = '\0';
         }
       } else {
         c->y += c->v;
         if (c->y < 0) {
+            //if char is out of window, disable it
           c->ch = '\0';
         }
         if (c->y + CHAR_H >= screen_h) {
+            //if char reaches the end of  window, 
           miss++;
           c->v = 0;
           c->y = screen_h - CHAR_H;
+          // c->t existing time of char
           c->t = FPS;
         }
       }
@@ -72,6 +80,7 @@ void render() {
   static int x[NCHAR], y[NCHAR], n = 0;
 
   for (int i = 0; i < n; i++) {
+    // erase drawed characters
     io_write(AM_GPU_FBDRAW, x[i], y[i], blank, CHAR_W, CHAR_H, false);
   }
 
@@ -93,14 +102,17 @@ void check_hit(char ch) {
   int m = -1;
   for (int i = 0; i < LENGTH(chars); i++) {
     struct character *c = &chars[i];
+    // c->y > chars[m].y, the y of current matched char is bigger than last one
     if (ch == c->ch && c->v > 0 && (m < 0 || c->y > chars[m].y)) {
       m = i;
     }
   }
+
   if (m == -1) {
     wrong++;
   } else {
     hit++;
+    // the matched char will be bounded back
     chars[m].v = -(screen_h - CHAR_H + 1) / (FPS);
   }
 }
@@ -119,6 +131,7 @@ void video_init() {
       io_write(AM_GPU_FBDRAW, x, y, blank, min(CHAR_W, screen_w - x), min(CHAR_H, screen_h - y), false);
     }
 
+    // color infor of every character
   for (int ch = 0; ch < 26; ch++) {
     char *c = &font[CHAR_H * ch];
     for (int i = 0, y = 0; y < CHAR_H; y++)
@@ -152,6 +165,7 @@ int main() {
 
   int current = 0, rendered = 0;
   while (1) {
+    // frames in 1 us
     int frames = io_read(AM_TIMER_UPTIME).us / (1000000 / FPS);
 
     for (; current < frames; current++) {

@@ -38,9 +38,9 @@ static inline void update_screen() {
 }
 
 void vga_update_screen() {
-    if (vgactl_port_base[0] != 0) {
+    if (vgactl_port_base[1] != 0) {
         update_screen();
-        memset(vmem, 0, SCREEN_SIZE);
+        vgactl_port_base[1] = 0;
     }
 }
 
