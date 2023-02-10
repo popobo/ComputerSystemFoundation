@@ -10,8 +10,8 @@
 #define AUDIO_MMIO 0xa1000200
 #define STREAM_BUF 0xa0800000
 #define STREAM_BUF_MAX_SIZE 65536
-#define AUDIO_BLOCK_LEN 2048
-#define ADB_Q_L 32 //65536 / 4096
+#define AUDIO_BLOCK_LEN 64
+#define ADB_Q_L 1024 //65536 / 4096
 
 enum {
   reg_freq,
@@ -22,6 +22,7 @@ enum {
   reg_count,
   reg_available_offset,
   reg_open_audio,
+  reg_available_end,
   nr_reg
 };
 
@@ -68,6 +69,7 @@ static inline void push_adb(int32_t data_len) {
     if (is_adb_queue_full()) {
         return;
     }
+
     if (-1 == queue_front) queue_front = 0;
     queue_rear = (queue_rear + 1) % ADB_Q_L;
     adb_queue[queue_rear].bytes_used = data_len;
@@ -100,18 +102,19 @@ static inline int32_t audio_buffer_used() {
 }
 
 static inline void audio_play(void *userdata, uint8_t *stream, int len) {
-    int32_t adb = pop_adb();
-    if (adb < 0) {
-        return;
-    }
-    int32_t write_len =  adb_queue[adb].bytes_used <= len ? adb_queue[adb].bytes_used : len;
-    adb_queue[adb].bytes_used = 0;
-    
-    SDL_memcpy(stream, adb_queue[adb].start, write_len);
+    int32_t adb = 0;
+    int32_t write_len = 0;
 
-    if (write_len < len) {
+    while((is_adb_queue_empty() != true) && len > 0) {
+        adb = pop_adb();
+        write_len =  adb_queue[adb].bytes_used <= len ? adb_queue[adb].bytes_used : len;
+        adb_queue[adb].bytes_used = 0;
+        SDL_memcpy(stream, adb_queue[adb].start, write_len);
         stream += write_len;
         len -= write_len;
+    }
+    
+    if (len > 0) {
         SDL_memset(stream, 0, len);
     }
 }
@@ -159,7 +162,7 @@ static void audio_io_handler(uint32_t offset, int len, bool is_write) {
             int push_len = 0;
             while(count > 0) {
                 push_len = count > AUDIO_BLOCK_LEN ? AUDIO_BLOCK_LEN : count;
-                push_adb(count);
+                push_adb(push_len);
                 count -= push_len;
             }
         } else {
@@ -169,9 +172,11 @@ static void audio_io_handler(uint32_t offset, int len, bool is_write) {
     case reg_available_offset:
         audio_base[reg_available_offset] = (int32_t)(adb_queue[(queue_rear + 1) % ADB_Q_L].start - sbuf);
         break;
-
     case reg_open_audio:
         open_sdl_audio();
+        break;
+    case reg_available_end:
+        audio_base[reg_available_end] = sbuf + STREAM_BUF_MAX_SIZE - adb_queue[(queue_rear + 1) % ADB_Q_L].start;
         break;
     default:
         break;
