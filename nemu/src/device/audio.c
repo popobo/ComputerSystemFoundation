@@ -51,7 +51,6 @@ static inline void init_audio_data_block() {
 }
 
 static inline bool is_adb_queue_full() {
-    
     if ((queue_front == queue_rear + 1) || (queue_front == 0 && queue_rear == ADB_Q_L - 1)) {
         return true;
     }
@@ -75,7 +74,6 @@ static inline void push_adb(int32_t data_len) {
     adb_queue[queue_rear].bytes_used = data_len;
 }
 
-static int32_t pop_data_len = 0;
 static inline int32_t pop_adb() {
     if (is_adb_queue_empty()) {
         return -1;
@@ -88,7 +86,6 @@ static inline int32_t pop_adb() {
     } else {
         queue_front = (queue_front + 1) % ADB_Q_L;
     }
-    pop_data_len += adb_queue[result].bytes_used;
 
     return result;
 }

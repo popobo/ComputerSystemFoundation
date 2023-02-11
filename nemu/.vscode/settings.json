@@ -16,6 +16,9 @@
         "map.h": "c",
         "difftest.h": "c",
         "typeinfo": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "monitor.h": "c",
+        "paddr.h": "c",
+        "decode.h": "c"
     }
 }
