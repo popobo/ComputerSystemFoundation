@@ -5,7 +5,7 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
  
-#define PRINT_BUF_SIZE 1024
+#define PRINT_BUF_SIZE 2048
 
 // current only support Decimal
 static inline int itoa(int64_t num, char *dest, int base) {
