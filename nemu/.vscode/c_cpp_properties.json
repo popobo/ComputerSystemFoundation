@@ -2,19 +2,6 @@
     "configurations": [
         {
             "name": "Linux",
-            "includePath": [
-                // "${workspaceFolder}/**",
-                // "${workspaceFolder}/tools/qemu-diff/include/**",
-                // "${workspaceFolder}/include/**"
-            ],
-            "defines": [
-                "__DIFF_REF_QEMU__",
-                "__ENGINE_interpreter__",
-                "__ISA__=riscv32",
-                "__ISA_riscv32__",
-                "HAS_IOE",
-                "_ISA_H_=\"isa/riscv32.h\""
-            ],
             "compilerPath": "/usr/bin/gcc",
             "cppStandard": "c++14",
             "intelliSenseMode": "linux-gcc-x64",
