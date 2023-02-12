@@ -1,7 +1,8 @@
 ENTRY(_start)
 
+/*riscv32 __pmem_start is 0x80000000*/
 SECTIONS {
-  . = _pmem_start + 0x100000;
+  . = _pmem_start + 0x100000; /* 0x80100000 */
   .text : {
     *(entry)
     *(.text*)
@@ -23,7 +24,7 @@ SECTIONS {
     *(.scommon)
   }
   _stack_top = ALIGN(0x1000);
-  . = _stack_top + 0x8000;
+  . = _stack_top + 0x8000; /* stack size 0x8000B */
   _stack_pointer = .;
   end = .;
   _end = .;

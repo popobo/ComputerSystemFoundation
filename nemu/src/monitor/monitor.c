@@ -48,6 +48,7 @@ static inline long load_img() {
   long size = ftell(fp);
 
   fseek(fp, 0, SEEK_SET);
+  // copy image to pmem[0x100000]
   int ret = fread(guest_to_host(IMAGE_START), size, 1, fp);
   assert(ret == 1);
 

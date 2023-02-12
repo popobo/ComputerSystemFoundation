@@ -19,6 +19,7 @@
         "stdlib.h": "c",
         "monitor.h": "c",
         "paddr.h": "c",
-        "decode.h": "c"
+        "decode.h": "c",
+        "isa.h": "c"
     }
 }

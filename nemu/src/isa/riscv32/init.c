@@ -22,6 +22,7 @@ static const uint32_t img [] = {
 
 static void restart() {
   /* Set the initial program counter. */
+  // in riscv32, cpu.pc is 0x80100000
   cpu.pc = PMEM_BASE + IMAGE_START;
 
   /* The zero register is always 0. */
