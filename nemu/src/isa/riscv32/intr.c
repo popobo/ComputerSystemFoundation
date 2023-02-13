@@ -5,7 +5,8 @@ void raise_intr(DecodeExecState *s, word_t NO, vaddr_t epc) {
     /* TODO: Trigger an interrupt/exception with ``NO''.
     * That is, use ``NO'' to index the IDT.
     */
-    cpu.sepc = s->seq_pc;
+    // For riscv32, we save the pc which points to current pc.
+    cpu.sepc = cpu.pc;
     cpu.scause = NO;
     s->jmp_pc = epc;
     s->is_jmp = true;
