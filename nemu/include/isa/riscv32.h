@@ -10,14 +10,15 @@
 // reg
 
 typedef struct {
-  struct {
-    rtlreg_t _32;
-  } gpr[32];
+    struct {
+        rtlreg_t _32;
+    } gpr[32];
 
-  vaddr_t pc;
-  rtlreg_t sepc;
-  rtlreg_t scause;
-  rtlreg_t stvec;
+    // according to trap.S
+    rtlreg_t sepc;
+    rtlreg_t scause;
+    rtlreg_t stvec;
+    vaddr_t pc;
 } riscv32_CPU_state;
 
 // decode
