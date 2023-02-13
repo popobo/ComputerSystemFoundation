@@ -115,6 +115,7 @@ static inline def_EHelper(e_funcs) {
 static inline def_EHelper(csrrw) {
     switch ((uint32_t)(s->isa.instr.i.simm11_0))
     {
+    EX(0x100, csrrw_sstatus)
     EX(0x105, csrrw_stvec)
     EX(0x141, csrrw_sepc)
     EX(0x142, csrrw_scause)
@@ -125,6 +126,7 @@ static inline def_EHelper(csrrw) {
 static inline def_EHelper(csrrs) {
     switch ((uint32_t)(s->isa.instr.i.simm11_0))
     {
+    EX(0x100, csrrs_sstatus)
     EX(0x105, csrrs_stvec)
     EX(0x141, csrrs_sepc)
     EX(0x142, csrrs_scause)
@@ -152,9 +154,9 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
     // val is the same as opcode1_0 because of union
     s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
     // printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    if (cpu.pc == 0x80100780) {
-        printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    }
+    // if (cpu.pc == 0x80100890) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
     Assert(s->isa.instr.i.opcode1_0 == 0x3, "Invalid instruction");
     switch (s->isa.instr.i.opcode6_2) {
         IDEX (0b00000, I, load)

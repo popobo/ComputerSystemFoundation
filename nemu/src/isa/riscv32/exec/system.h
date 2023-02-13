@@ -20,6 +20,13 @@ static inline def_EHelper(csrrw_scause) {
     cpu.scause = *dsrc1;
 }
 
+static inline def_EHelper(csrrw_sstatus) {
+    if (id_dest->reg != 0) {
+        *ddest = cpu.sstatus;
+    }
+    cpu.sstatus = *dsrc1;
+}
+
 static inline def_EHelper(csrrs_stvec) {
     *ddest = cpu.stvec;
     if (id_src1->reg != 0) {
@@ -38,6 +45,13 @@ static inline def_EHelper(csrrs_scause) {
     *ddest = cpu.scause;
     if (id_src1->reg != 0) {
         cpu.scause &= (~*dsrc1);
+    }
+}
+
+static inline def_EHelper(csrrs_sstatus) {
+    *ddest = cpu.sstatus;
+    if (id_src1->reg != 0) {
+        cpu.sstatus &= (~*dsrc1);
     }
 }
 
