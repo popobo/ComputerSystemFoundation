@@ -6,9 +6,10 @@
             "request": "launch",
             "program": "${cwd}/build/riscv32-nemu-interpreter",
             "args": [ 
+                      "-b",
                       "-l ${cwd}/../am-kernels/tests/cpu-tests/build/nemu-log.txt",
                       "--log=${cwd}/build/nemu-log.txt",
-                      "${cwd}/../am-kernels/tests/am-tests/build/amtest-riscv32-nemu.bin",
+                      "${cwd}/../nanos-lite/build/nanos-lite-riscv32-nemu.bin",
                       //"${cwd}/../am-kernels/tests/cpu-tests/build/add-longlong-riscv32-nemu.bin",
                       "--diff=${cwd}/tools/qemu-diff/build/riscv32-qemu-so"
             ],

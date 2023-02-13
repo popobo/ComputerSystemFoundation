@@ -20,6 +20,12 @@
         "monitor.h": "c",
         "paddr.h": "c",
         "decode.h": "c",
-        "isa.h": "c"
+        "isa.h": "c",
+        "exec.h": "c",
+        "reg.h": "c",
+        "*.tcc": "cpp",
+        "all-instr.h": "c",
+        "ldst.h": "c",
+        "muldiv.h": "c"
     }
 }

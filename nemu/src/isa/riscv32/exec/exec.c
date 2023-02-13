@@ -103,12 +103,42 @@ static inline def_EHelper(cbi) {
     }
 }
 
+static inline def_EHelper(csrrw) {
+    switch ((uint32_t)(s->isa.instr.i.simm11_0))
+    {
+    EX(0x105, csrrw_stvec)
+    EX(0x141, csrrw_sepc)
+    EX(0x142, csrrw_scause)
+    default: exec_inv(s);
+    }
+}
+
+static inline def_EHelper(e_funcs) {
+    switch (s->isa.instr.i.simm11_0)
+    {
+    EX(0b000000000000, ecall)
+    default: exec_inv(s);
+    }
+}
+
+static inline def_EHelper(csrr) {
+    switch (s->isa.instr.i.funct3)
+    {
+    EX(0b000, e_funcs)
+    EX(0b001, csrrw)
+    // EX(0b010, csrrs)
+    // EX(0b011, csrrc)
+    
+    default: exec_inv(s);
+    }
+}
+
 static inline void fetch_decode_exec(DecodeExecState *s) {
-  // fetch instruction
-  // pc is 4 bytes(32bits)
-  // val is the same as opcode1_0 because of union
-  s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
-//   printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // fetch instruction
+    // pc is 4 bytes(32bits)
+    // val is the same as opcode1_0 because of union
+    s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
+    // printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
     // if (cpu.pc == 0x801000c0) {
     //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
     // }
@@ -123,6 +153,7 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
         IDEX (0b11011, J, jal)
         IDEX (0b11001, I, jalr)
         IDEX (0b11000, B, cbi)
+        IDEX (0b11100, I, csrr)
         EX   (0b11010, nemu_trap)
         default: exec_inv(s);
     }
