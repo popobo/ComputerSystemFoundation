@@ -5,17 +5,17 @@
 static Context* (*user_handler)(Event, Context*) = NULL;
 
 Context* __am_irq_handle(Context *c) {
-  if (user_handler) {
-    Event ev = {0};
-    switch (c->cause) {
-      default: ev.event = EVENT_ERROR; break;
+    if (user_handler) {
+        Event ev = {0};
+        switch (c->cause) {
+        default: ev.event = EVENT_ERROR; break;
+        }
+
+        c = user_handler(ev, c);
+        assert(c != NULL);
     }
 
-    c = user_handler(ev, c);
-    assert(c != NULL);
-  }
-
-  return c;
+    return c;
 }
 
 extern void __am_asm_trap(void);
