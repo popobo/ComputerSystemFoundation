@@ -63,5 +63,5 @@ static inline def_EHelper(ecall) {
 
 static inline def_EHelper(sret) {
     s->is_jmp = true;
-    s->jmp_pc = cpu.sepc;
+    s->jmp_pc = cpu.sepc + sizeof(cpu.sepc);
 }
