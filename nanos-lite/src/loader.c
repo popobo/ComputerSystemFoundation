@@ -1,5 +1,6 @@
 #include <proc.h>
 #include <elf.h>
+#include <stdio.h>
 
 #ifdef __LP64__
 # define Elf_Ehdr Elf64_Ehdr
@@ -10,8 +11,9 @@
 #endif
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
-  TODO();
-  return 0;
+    extern uint32_t ramdisk_start;
+    printf("ramdisk_start: %d\n", ramdisk_start);
+    return 0;
 }
 
 void naive_uload(PCB *pcb, const char *filename) {
