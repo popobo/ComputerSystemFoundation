@@ -72,7 +72,7 @@ static inline int printf_tool(char *out, const char *fmt, va_list args) {
         cmp = strncmp(fmt + fmt_index, "%d", 2);
         if (0 == cmp) {
             
-            integer = va_arg(args, int);
+            integer = va_arg(args, int32_t);
             length_integer_str = itoa(integer, temp_buf, 10);
             strcpy(out + out_index, temp_buf);
             
