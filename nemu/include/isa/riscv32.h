@@ -15,11 +15,11 @@ typedef struct {
     } gpr[32];
 
     // according to trap.S
+    vaddr_t pc;
     rtlreg_t sepc;
     rtlreg_t scause;
     rtlreg_t stvec;
     rtlreg_t sstatus;
-    vaddr_t pc;
 } riscv32_CPU_state;
 
 // decode
