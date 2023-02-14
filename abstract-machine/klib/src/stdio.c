@@ -12,7 +12,20 @@ static inline int itoa(int64_t num, char *dest, int base) {
     int offset = 0;
     int rem = 0;
     char neg_flag = 0;
-    
+    char asii_fix = 0;
+
+    switch (base)
+    {
+    case 10:
+        asii_fix = 0;
+        break;
+    case 16:
+        asii_fix = 'A' - '0' - 10;
+        break;
+    default:
+        break;
+    }
+
     if (num == 0) {
         dest[offset++] = '0';
         return offset;
@@ -25,7 +38,7 @@ static inline int itoa(int64_t num, char *dest, int base) {
 
     while (num != 0) {
         rem = neg_flag == 1 ? -(num % base) : num % base;
-        dest[offset++] = '0' + rem;
+        dest[offset++] = '0' + rem + (rem > 9 ? asii_fix : 0);
         num /= base;
     }
 
@@ -78,6 +91,19 @@ static inline int printf_tool(char *out, const char *fmt, va_list args) {
             
             out_index += length_integer_str;
             fmt_index += 3;
+
+            continue;
+        }
+
+        cmp = strncmp(fmt + fmt_index, "%x", 2);
+        if (0 == cmp) {
+            
+            integer = va_arg(args, int64_t);
+            length_integer_str = itoa(integer, temp_buf, 16);
+            strcpy(out + out_index, temp_buf);
+            
+            out_index += length_integer_str;
+            fmt_index += 2;
 
             continue;
         }

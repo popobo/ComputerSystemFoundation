@@ -42,7 +42,6 @@ static inline long load_img() {
   FILE *fp = fopen(img_file, "rb");
   Assert(fp, "Can not open '%s'", img_file);
 
-  Log("The image is %s", img_file);
 
   fseek(fp, 0, SEEK_END);
   long size = ftell(fp);
@@ -50,6 +49,7 @@ static inline long load_img() {
   fseek(fp, 0, SEEK_SET);
   // copy image to pmem[0x100000]
   int ret = fread(guest_to_host(IMAGE_START), size, 1, fp);
+  Log("The image is %s, size: %ld", img_file, size);
   assert(ret == 1);
 
   fclose(fp);
