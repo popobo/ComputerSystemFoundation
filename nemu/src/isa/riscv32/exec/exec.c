@@ -148,15 +148,29 @@ static inline def_EHelper(csrr) {
     }
 }
 
+// cpu.pc:0x830004bc, s->isa.instr.val:0x50413
+// cpu.pc:0x830004c0, s->isa.instr.val:0x2097
+// cpu.pc:0x830004c4, s->isa.instr.val:0xb0c080e7 // 1011 0000 1100 00001  000  00001  1100111
+// cpu.pc:0x82ffffd4, s->isa.instr.val:0x17f6bb15
+
 static inline void fetch_decode_exec(DecodeExecState *s) {
     // fetch instruction
     // pc is 4 bytes(32bits)
     // val is the same as opcode1_0 because of union
     s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
     // printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    if (cpu.pc == 0x80100004) {
-        printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    }
+    // if (cpu.pc == 0x830004c0) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+    // if (cpu.pc == 0x830004c4) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+    // if (s->seq_pc == 0x82ffffd4) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+    // if (s->jmp_pc == 0x82ffffd4) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
     Assert(s->isa.instr.i.opcode1_0 == 0x3, "Invalid instruction");
     switch (s->isa.instr.i.opcode6_2) {
         IDEX (0b00000, I, load)

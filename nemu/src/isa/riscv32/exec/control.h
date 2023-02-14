@@ -11,9 +11,9 @@ static inline def_EHelper(jal) {
 }
 
 static inline def_EHelper(jalr) {
-    *ddest = cpu.pc + sizeof(cpu.pc);
     s->is_jmp = true;
     s->jmp_pc = (*dsrc1 + id_src2->simm) & ~1;
+    *ddest = cpu.pc + sizeof(cpu.pc);
     print_asm_template3(jalr);
 }
 
