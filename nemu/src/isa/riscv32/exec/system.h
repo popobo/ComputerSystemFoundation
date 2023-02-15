@@ -55,10 +55,16 @@ static inline def_EHelper(csrrs_sstatus) {
     }
 }
 
+#ifdef DIFF_TEST
+void difftest_skip_dut(int nr_ref, int nr_dut);
+#endif
 static inline def_EHelper(ecall) {
     extern void raise_intr(DecodeExecState *s, word_t NO, vaddr_t epc);
     // 9 Environment call from S-mode
     raise_intr(s, 9, cpu.stvec);
+#ifdef DIFF_TEST
+    difftest_skip_dut(1, 2);
+#endif
 }
 
 static inline def_EHelper(sret) {
