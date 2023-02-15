@@ -10,6 +10,13 @@
 # define Elf_Phdr Elf32_Phdr
 #endif
 
+#if defined(__ISA_AM_NATIVE__)
+#define EXPECT_TYPE EM_X86_64
+#elif defined(__ISA_RISCV32__) || defined(__ISA_RISCV64__)
+#define EXPECT_TYPE EM_RISCV
+#else
+# error unsupported ISA __ISA__
+#endif
 
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
@@ -18,9 +25,10 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
 
     // now we found the ramdisk_start
     // how to extract the elf info from it
-    Elf32_Ehdr * ehdr = (Elf32_Ehdr *)&ramdisk_start;
-    Elf32_Phdr * phdr = NULL;
+    Elf_Ehdr * ehdr = (Elf_Ehdr *)&ramdisk_start;
+    Elf_Phdr * phdr = NULL;
     assert(*(uint32_t *)ehdr->e_ident == 0x464C457F);
+    assert(ehdr->e_machine == EXPECT_TYPE);
     // printf("ehdr->e_type %d\n", ehdr->e_type);
     // printf("ehdr->e_machine: %d\n", ehdr->e_machine);
     // printf("ehdr->e_version: %d\n", ehdr->e_version);
@@ -28,7 +36,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     // printf("ehdr->e_phentsize: %d\n", ehdr->e_phentsize);
     // printf("ehdr->e_phnum: %d\n", ehdr->e_phnum);
     assert(ehdr->e_phoff != 0 && ehdr->e_phnum != 0xffff);
-    phdr = (Elf32_Phdr *)((uintptr_t)ehdr + ehdr->e_phoff);
+    phdr = (Elf_Phdr *)((uintptr_t)ehdr + ehdr->e_phoff);
     for (int i = 0; i < ehdr->e_phnum; ++i) {
         // printf("phdr[%d].p_vaddr: 0x%x\n", i, (int64_t)phdr[i].p_vaddr);
         // printf("phdr[%d].p_offset: %d\n", i, phdr[i].p_offset);
