@@ -31,6 +31,9 @@ void do_syscall(Context *c) {
         }
         c->GPRx = a[3];
         break;
+    case SYS_brk:
+        c->GPRx = 0;
+        break;
     case -1:
         Log("ignore unhandled syscall ID -1");
         break;
