@@ -158,6 +158,100 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
     // pc is 4 bytes(32bits)
     // val is the same as opcode1_0 because of union
     s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
+    // if (cpu.pc > 0x83000000) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+    // // a0 = 1, a1 = 0x83006397, 
+    // if (cpu.pc == 0x83004a48) {
+    //     // a0 = 1, a1 = 0x83006497, a2 = 1, a7 = 0x83006430 // after 0x83004a48 li a7 4, a7 = 4
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // if (cpu.pc == 0x83003fe8) {
+    //     // a0 = 0x83006000, a1 = 1, a2 = 83006397, a7 = 0x83006430
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // if (cpu.pc == 0x83004004) {
+    //     // a0 = 0x83006000, a1 = 1, a2 = 83006397, a7 = 0x83006430
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // if (cpu.pc == 0x83002230) {        
+    //     // mv	s3,a3
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // if (cpu.pc == 0x83002200) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // if (cpu.pc == 0x830027ac) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // // 83002664:	00912a23          	sw	s1,20(sp)
+    // if (cpu.pc == 0x83002664) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // // 83002780:	412484b3          	sub	s1,s1,s2
+    // if (cpu.pc == 0x83002780) {
+    //     //char c = vaddr_read((vaddr_t)cpu.gpr[9]._32, 1);
+    //     char c = vaddr_read((vaddr_t)cpu.gpr[18]._32, 1);
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x, %c\n", cpu.pc, s->isa.instr.val, c);
+    // }
+
+    // // 83002650:	00c5d783          	lhu	a5,12(a1)
+    // if (cpu.pc == 0x83002650) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // if (cpu.pc == 0x83002888) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+    // 83004a48 <_write>:
+    // 83004a48:	00400893          	li	a7,4
+
+    // 83003fe8 <_write_r>:
+    // 83003fe8:	ff010113          	addi	sp,sp,-16
+
+    // 83002650 <__sflush_r>:
+    // 83002650:	00c5d783          	lhu	a5,12(a1)
+
+    // 83002888 <_fflush_r>:
+    // 83002888:	fe010113          	addi	sp,sp,-32
+
+    // 83004734 <__swbuf_r>:
+    // 83004734:	fe010113          	addi	sp,sp,-32
+    // if (cpu.pc == 0x83004734) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // // 83002980 <_putc_r>:
+    // // 83002980:	fe010113          	addi	sp,sp,-32
+    // if (cpu.pc == 0x83002980) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // // 830016b0 <_fputc_r>:
+    // // 830016b0:	fe010113          	addi	sp,sp,-32
+    // if (cpu.pc == 0x830016b0) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // // 83000ae4 <__sfputs_r>:
+    // // 83000ae4:	08068e63          	beqz	a3,83000b80 <__sfputs_r+0x9c>
+    // if (cpu.pc == 0x83000ae4) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
+    // // 83000158 <_vfprintf_r>:
+    // // 83000158:	f7010113          	addi	sp,sp,-144
+    // if (cpu.pc == 0x83000158) {
+    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    // }
+
     // printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
     // if (cpu.pc == 0x830004c0) {
     //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);

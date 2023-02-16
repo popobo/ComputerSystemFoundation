@@ -18,7 +18,7 @@ void do_syscall(Context *c) {
         halt(a[1]);
         break;
     case SYS_write:
-        Log("SYS_write, a[1]:%d, a[3]:%d", a[1], a[3]);
+        // Log("SYS_write, a[1]:%d, a[3]:%d", a[1], a[3]);
         if (NULL == (void *)a[2] || 0 == a[3]) {
             c->GPRx = -1;
             break;
