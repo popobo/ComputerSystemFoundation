@@ -24,15 +24,7 @@ void do_syscall(Context *c) {
             c->GPRx = -1;
             break;
         }
-        if (1 == a[1] || 2 == a[1]) {
-            char *buf = (char *)a[2];
-            for (int32_t i = 0; i < a[3]; ++i) {
-                putch(buf[i]);
-            }
-            c->GPRx = a[3];
-        } else {
-            c->GPRx = fs_write(a[1], (void *)a[2], a[3]);
-        }
+        c->GPRx = fs_write(a[1], (void *)a[2], a[3]);
         break;
     case SYS_open:
         c->GPRx = fs_open((const char *)a[1], a[2], a[3]);
