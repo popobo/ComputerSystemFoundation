@@ -1,6 +1,7 @@
 #include <proc.h>
 #include <elf.h>
 #include <stdio.h>
+#include "fs.h"
 
 #ifdef __LP64__
 # define Elf_Ehdr Elf64_Ehdr
@@ -18,37 +19,45 @@
 # error unsupported ISA __ISA__
 #endif
 
-
 static uintptr_t loader(PCB *pcb, const char *filename) {
-    extern uint32_t ramdisk_start;
-    size_t ramdisk_read(void *buf, size_t offset, size_t len);
-
-    // now we found the ramdisk_start
-    // how to extract the elf info from it
-    Elf_Ehdr * ehdr = (Elf_Ehdr *)&ramdisk_start;
-    Elf_Phdr * phdr = NULL;
-    assert(*(uint32_t *)ehdr->e_ident == 0x464C457F);
-    assert(ehdr->e_machine == EXPECT_TYPE);
-    // printf("ehdr->e_type %d\n", ehdr->e_type);
-    // printf("ehdr->e_machine: %d\n", ehdr->e_machine);
-    // printf("ehdr->e_version: %d\n", ehdr->e_version);
-    // printf("ehdr->e_phoff: %d\n", ehdr->e_phoff);
-    // printf("ehdr->e_phentsize: %d\n", ehdr->e_phentsize);
-    // printf("ehdr->e_phnum: %d\n", ehdr->e_phnum);
-    assert(ehdr->e_phoff != 0 && ehdr->e_phnum != 0xffff);
-    phdr = (Elf_Phdr *)((uintptr_t)ehdr + ehdr->e_phoff);
-    for (int i = 0; i < ehdr->e_phnum; ++i) {
-        // printf("phdr[%d].p_vaddr: 0x%x\n", i, (int64_t)phdr[i].p_vaddr);
-        // printf("phdr[%d].p_offset: %d\n", i, phdr[i].p_offset);
-        // printf("phdr[%d].p_memsz: %d\n", i, phdr[i].p_memsz);
-        if (PT_LOAD == phdr[i].p_type) {
-            ramdisk_read((void *)phdr[i].p_vaddr, phdr[i].p_offset, phdr[i].p_filesz);
-            memset((void *)(phdr[i].p_vaddr + phdr[i].p_filesz), 0, phdr[i].p_memsz - phdr[i].p_filesz);
-        }
-    }
+    assert(filename != NULL);
     
-    return ehdr->e_entry;
+    int fd = fs_open(filename, 0, 0);
+    Elf_Ehdr ehdr = {};
+    Elf_Phdr phdr = {};
+
+    fs_read(fd, (void *)&ehdr, sizeof(Elf_Ehdr));
+    assert(*(uint32_t *)ehdr.e_ident == 0x464C457F);
+    assert(ehdr.e_machine == EXPECT_TYPE);
+    // printf("ehdr.e_type %d\n", ehdr.e_type);
+    // printf("ehdr.e_machine: %d\n", ehdr.e_machine);
+    // printf("ehdr.e_version: %d\n", ehdr.e_version);
+    // printf("ehdr.e_phoff: %d\n", ehdr.e_phoff);
+    // printf("ehdr.e_phentsize: %d\n", ehdr.e_phentsize);
+    // printf("ehdr.e_phnum: %d\n", ehdr.e_phnum);
+    // printf("ehdr.e_entry: 0x%x\n", (int64_t)ehdr.e_entry);
+    assert(ehdr.e_phoff != 0 && ehdr.e_phnum != 0xffff);
+    for (int i = 0; i < ehdr.e_phnum; ++i) {
+        fs_lseek(fd, ehdr.e_phoff + sizeof(Elf_Phdr) * i, SEEK_SET);
+        fs_read(fd, &phdr, sizeof(Elf_Phdr));
+        
+        if (PT_LOAD != phdr.p_type) {
+            continue;
+        }
+
+        // printf("phdr.p_vaddr: 0x%x\n", (int64_t)phdr.p_vaddr);
+        // printf("phdr.p_offset: %d\n", phdr.p_offset);
+        // printf("phdr.p_filesz: %d\n", phdr.p_filesz);
+        // printf("phdr.p_memsz: %d\n", phdr.p_memsz);
+        
+        fs_lseek(fd, phdr.p_offset, SEEK_SET);
+        fs_read(fd, (void *)phdr.p_vaddr, phdr.p_filesz);
+        memset((void *)(phdr.p_vaddr + phdr.p_filesz), 0, phdr.p_memsz - phdr.p_filesz);
+    }
+
+    return ehdr.e_entry;
 }
+
 
 void naive_uload(PCB *pcb, const char *filename) {
   uintptr_t entry = loader(pcb, filename);

@@ -1,4 +1,5 @@
 #include <common.h>
+#include "fs.h"
 #include "syscall.h"
 void do_syscall(Context *c) {
   uintptr_t a[4];
@@ -19,7 +20,7 @@ void do_syscall(Context *c) {
         break;
     case SYS_write:
         // Log("SYS_write, a[1]:%d, a[3]:%d", a[1], a[3]);
-        if (NULL == (void *)a[2] || 0 == a[3]) {
+        if (NULL == (void *)a[2]) {
             c->GPRx = -1;
             break;
         }
@@ -28,9 +29,22 @@ void do_syscall(Context *c) {
             for (int32_t i = 0; i < a[3]; ++i) {
                 putch(buf[i]);
             }
+            c->GPRx = a[3];
+        } else {
+            c->GPRx = fs_write(a[1], (void *)a[2], a[3]);
         }
-        c->GPRx = a[3];
         break;
+    case SYS_open:
+        c->GPRx = fs_open((const char *)a[1], a[2], a[3]);
+        break;
+    case SYS_read:
+        c->GPRx = fs_read(a[1], (void *)a[2], a[3]);
+        break;
+    case SYS_lseek:
+        c->GPRx = fs_lseek(a[1], a[2], a[3]);
+        break;
+    case SYS_close:
+        c->GPRx = fs_close(a[1]);
     case SYS_brk:
         c->GPRx = 0;
         break;
