@@ -98,7 +98,7 @@ static inline int printf_tool(char *out, const char *fmt, va_list args) {
         cmp = strncmp(fmt + fmt_index, "%x", 2);
         if (0 == cmp) {
             
-            integer = va_arg(args, int64_t);
+            integer = va_arg(args, uint32_t);
             length_integer_str = itoa(integer, temp_buf, 16);
             strcpy(out + out_index, temp_buf);
             

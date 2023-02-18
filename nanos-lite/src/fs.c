@@ -75,7 +75,6 @@ size_t fs_read(int fd, void *buf, size_t len) {
 }
 
 size_t fs_write(int fd, void *buf, size_t len) {
-    printf("write_len: %d\n", len);
     if (fd < 0 || fd >= sizeof(file_table) / sizeof(file_table[0])) {
         return -1;
     }

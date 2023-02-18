@@ -40,6 +40,19 @@ void do_syscall(Context *c) {
     case SYS_brk:
         c->GPRx = 0;
         break;
+    case SYS_gettimeofday: {
+        long *tv = (long *)a[1];
+        if (NULL == tv) {
+            c->GPRx = -1;
+            break;
+        }
+        long us = io_read(AM_TIMER_UPTIME).us;
+        
+        tv[0] = us / (1000 * 1000);
+        tv[1] = us % (1000 * 1000);
+        c->GPRx = 0;
+        break;
+    }
     case -1:
         Log("ignore unhandled syscall ID -1");
         break;
