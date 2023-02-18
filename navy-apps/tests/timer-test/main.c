@@ -3,17 +3,17 @@
 #include <stdint.h>
 #include <sys/time.h>
 
+uint32_t NDL_GetTicks();
+
 int main() {
     struct timeval cur_tv = {};
-    
-    uint64_t total_us_cur = 0;
-    uint64_t total_us_last = 0;
+
+    uint32_t last_ms = 0;
     while(1) {
-        gettimeofday(&cur_tv, NULL);
-        total_us_cur = cur_tv.tv_sec * 1000 * 1000 + cur_tv.tv_usec;
-        if (total_us_cur - total_us_last > 500 * 1000) {
-            printf("total_us_cur: %ld\n", (long)(total_us_cur));
-            total_us_last = total_us_cur;
+        uint32_t cur_ms = NDL_GetTicks();
+        if (cur_ms - last_ms > 500) {
+            last_ms = cur_ms;
+            printf("cur_ms: %d\n", (int32_t)(cur_ms));
         }
     }
 
