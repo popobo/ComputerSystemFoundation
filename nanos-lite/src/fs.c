@@ -20,6 +20,7 @@ size_t ramdisk_write(const void *buf, size_t offset, size_t len);
 size_t serial_write(const void *buf, size_t offset, size_t len);
 size_t events_read(void *buf, size_t offset, size_t len);
 size_t dispinfo_read(void *buf, size_t offset, size_t len);
+size_t fb_write(const void *buf, size_t offset, size_t len);
 
 size_t invalid_read(void *buf, size_t offset, size_t len) {
   panic("should not reach here");
@@ -37,12 +38,16 @@ static Finfo file_table[] __attribute__((used)) = {
   [FD_STDOUT] = {"stdout", 0, 0, invalid_read, serial_write},
   [FD_STDERR] = {"stderr", 0, 0, invalid_read, serial_write},
   [FD_EVENTS] = {"/dev/events", 0, 0, events_read, invalid_write},
-  [FD_DISPINFO] = {"/dev/dispinfo", 0, 0, dispinfo_read, invalid_write},    
+  [FD_DISPINFO] = {"/proc/dispinfo", 0, 0, dispinfo_read, invalid_write},
+  [FD_FB] = {"/dev/fb",  0, 0, invalid_read, fb_write},
 #include "files.h"
 };
 
 void init_fs() {
-  // TODO: initialize the size of /dev/fb
+    // TODO: initialize the size of /dev/fb
+    file_table[FD_FB].size = io_read(AM_GPU_CONFIG).width * 
+                             io_read(AM_GPU_CONFIG).height * 
+                             sizeof(uint32_t);
 }
 
 int fs_open(const char *pathname, int flags, int mode) {
@@ -135,7 +140,7 @@ size_t fs_lseek(int fd, size_t offset, int whence) {
     } else if (target_offset > file_table[fd].disk_offset + file_table[fd].size) {
         target_offset = file_table[fd].disk_offset + file_table[fd].size;
     }
-    
+
     file_table[fd].open_offset = target_offset;
 
     // Upon successful completion, lseek() returns the resulting offset location as measured in bytes from the beginning of the file.

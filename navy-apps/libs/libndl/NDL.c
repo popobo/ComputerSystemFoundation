@@ -5,42 +5,15 @@
 #include <unistd.h>
 #include <regex.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <fcntl.h>
 
-static int evtdev = -1;
-static int fbdev = -1;
-static int screen_w = 0, screen_h = 0;
-
-enum {
-    KEY_NONE,
-    KEY_WIDTH,
-    KEY_HEIGHT,
-};
-
-static struct rule  {
-    char *regex;
-    int token_type;
-} rules[] = {
-    {"WIDTH:[0-9]+", KEY_WIDTH},
-    {"HEIGHT:[0-9]+", KEY_HEIGHT},
-};
-
-#define NR_REGEX (sizeof(rules) / sizeof(rules[0]))
-
-static regex_t re[NR_REGEX] = {};
-
-static inline void init_regex() {
-    int i = 0;
-    char error_msg[128] = {};
-    int ret = 0;
-    for (int i = 0; i < NR_REGEX; ++i) {
-        ret = regcomp(&re[i], rules[i].regex, REG_EXTENDED);
-        if (ret != 0) {
-            regerror(ret, &re[i], error_msg, 128);
-            printf("reg comp error: %s\n", error_msg);
-            return;
-        }
-    }
-}
+static int32_t evtdev = -1;
+static int32_t fbdev = -1;
+static int32_t screen_w = 0, screen_h = 0;
+static int32_t canvas_w = 0, canvas_h = 0;
+int32_t canvas_x = 0;
+int32_t canvas_y = 0;
 
 static inline int32_t get_value_by_key(char *source, char *key) {
     if (NULL == source || NULL == source) {
@@ -111,36 +84,69 @@ int NDL_PollEvent(char *buf, int len) {
 void NDL_OpenCanvas(int *w, int *h) {
     
     char buf[1024] = {};
-    FILE *fp = fopen("/proc/dispinfo", "r+");
-    fread(buf, sizeof(char), sizeof(buf)/sizeof(buf[0]), fp);
+    int fd = open("/proc/dispinfo", O_RDONLY);
+    lseek(fd, 0, SEEK_SET);
+    read(fd, buf, sizeof(buf)/sizeof(buf[0]));
     printf("%d, buf:%s\n", __LINE__, buf);
     int width = get_value_by_key(buf, "WIDTH");
-    *w = width < 0 ? 0 : width;
     int height = get_value_by_key(buf, "HEIGHT");
-    *h = height < 0 ? 0 : height;
     
-    printf("width: %d, height:%d\n", *w, *h);
-    
-  if (getenv("NWM_APP")) {
-    int fbctl = 4;
-    fbdev = 5;
-    screen_w = *w; screen_h = *h;
-    char buf[64];
-    int len = sprintf(buf, "%d %d", screen_w, screen_h);
-    // let NWM resize the window and create the frame buffer
-    write(fbctl, buf, len);
-    while (1) {
-      // 3 = evtdev
-      int nread = read(3, buf, sizeof(buf) - 1);
-      if (nread <= 0) continue;
-      buf[nread] = '\0';
-      if (strcmp(buf, "mmap ok") == 0) break;
+    if (*w == 0 && *h == 0) {
+        *w = width < 0 ? 0 : width;
+        *h = height < 0 ? 0 : height;
     }
-    close(fbctl);
-  }
+
+    screen_w = width;
+    screen_h = height;
+    canvas_w = *w;
+    canvas_h = *h;
+    canvas_x = (screen_w - canvas_w) >> 1;
+    canvas_y = (screen_h - canvas_h) >> 1;
+
+    printf("width: %d, height:%d\n", screen_w, screen_h);
+    printf("canvans_x:%d, canvans_y:%d\n", canvas_x, canvas_y);
+    
+//   if (getenv("NWM_APP")) {
+//     int fbctl = 4;
+//     fbdev = 5;
+//     screen_w = *w; screen_h = *h;
+//     char buf[64];
+//     int len = sprintf(buf, "%d %d", screen_w, screen_h);
+//     // let NWM resize the window and create the frame buffer
+//     write(fbctl, buf, len);
+//     while (1) {
+//       // 3 = evtdev
+//       int nread = read(3, buf, sizeof(buf) - 1);
+//       if (nread <= 0) continue;
+//       buf[nread] = '\0';
+//       if (strcmp(buf, "mmap ok") == 0) break;
+//     }
+//     close(fbctl);
+//   }
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
+    int32_t fd = open("/dev/fb", O_RDWR);
+    int32_t offset = 0;
+    int32_t len = 0;
+    int32_t pixel_size = sizeof(uint32_t);
+    uint8_t *byte_pixels = (uint8_t *)pixels;
+    
+    for (int i = y; i < y + h + 1; ++i) {
+        
+        offset = (screen_w * (i + canvas_y) + canvas_x + x) * pixel_size;
+        printf("offset:%d\n", offset);
+        lseek(fd, offset, SEEK_SET);
+        write(fd, 
+            byte_pixels + pixel_size * w * i, 
+            w * pixel_size);
+        
+
+        //fseek(fp, screen_w * sizeof(uint32_t) * (y + i), SEEK_SET);
+    
+        //printf("screen_w * sizeof(uint32_t) * (y + i):%d\n", (int32_t)(screen_w * sizeof(uint32_t) * (y + i)));
+        //fwrite((void *)(pixels + i * w), sizeof(uint32_t), w, fp);
+    }
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
@@ -165,5 +171,4 @@ int NDL_Init(uint32_t flags) {
 }
 
 void NDL_Quit() {
-    init_regex();
 }
