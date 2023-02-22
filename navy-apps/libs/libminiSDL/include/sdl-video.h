@@ -1,6 +1,7 @@
 #ifndef __SDL_VIDEO_H__
 #define __SDL_VIDEO_H__
 
+//Create the video surface in video memory
 #define SDL_HWSURFACE 0x1
 #define SDL_PHYSPAL 0x2
 #define SDL_LOGPAL 0x4
@@ -41,10 +42,14 @@ typedef struct {
 } SDL_PixelFormat;
 
 typedef struct {
+    //internal use
 	uint32_t flags;
-	SDL_PixelFormat *format;
+    SDL_PixelFormat *format;
+    //the width and height in pixels
 	int w, h;
+    //the length of a row of pixels in bytes
 	uint16_t pitch;
+    //the pointer to the actual pixel data
 	uint8_t *pixels;
 } SDL_Surface;
 
