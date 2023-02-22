@@ -3,20 +3,85 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <assert.h>
+#include <stdio.h>
 
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
-  assert(dst && src);
-  assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+    assert(dst && src);
+    assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+
+    SDL_Rect null_srcrect = {};
+    if (NULL == srcrect) {
+        srcrect = &null_srcrect;
+        null_srcrect.x = 0;
+        null_srcrect.y = 0;
+        null_srcrect.w = src->w;
+        null_srcrect.h = src->h;
+    }
+    SDL_Rect null_dstrect = {};
+    if (NULL == dstrect) {
+        dstrect = &null_dstrect;
+        null_dstrect.x = 0;
+        null_dstrect.y = 0;
+    }
+    uint32_t src_max_y = (srcrect->y + srcrect->h > src->h) ? src->h : (srcrect->y + srcrect->h);
+    uint32_t src_max_x = (srcrect->x + srcrect->w > src->w) ? src->w : (srcrect->x + srcrect->w);
+
+    uint32_t dst_max_y = dst->h > src_max_y ? dst->h : src_max_y;
+    uint32_t dst_max_x = dst->w > src_max_x ? dst->w : src_max_x;
+
+    dstrect->h = dst_max_y;
+    dstrect->w = dst_max_x;
+
+    uint32_t *src_pixels = (uint32_t *)src->pixels;
+    uint32_t *dst_pixels = (uint32_t *)dst->pixels;
+    for (int i = srcrect->y, m = dstrect->y;
+            i < src_max_y && m < dst_max_y; 
+            ++i, ++m) {
+        for (int j = srcrect->x, n = dstrect->x;
+                j < src_max_x && n < dst_max_x;
+                ++j, ++n) {
+            dst_pixels[m * dst->w + n] = src_pixels[i * src->w + j];
+        }
+    }
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+    assert(dst != NULL);
+    //assert(dstrect != NULL);
+    
+    printf("line: :%d\n", __LINE__);
+    SDL_Rect null_dstrect = {};
+    if (NULL == dstrect) {
+        dstrect = &null_dstrect;
+        null_dstrect.x = 0;
+        null_dstrect.y = 0;
+        null_dstrect.w = dst->w;
+        null_dstrect.h = dst->h;
+    }
+    printf("line: :%d\n", __LINE__);
+    
+    uint32_t *pixels = (uint32_t *)dst->pixels;
+    for (int i = dstrect->y; 
+         i < dstrect->y + dstrect->h && i < dst->h; ++i) {
+            for (int j = dstrect->x; 
+                 j < dstrect->x + dstrect->w && j < dst->w; ++j) {
+                    pixels[i * dst->w + j] = color;
+            }
+    }
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
+    uint32_t screen_w = NDL_GetScreenWidth();
+    uint32_t screen_h = NDL_GetScreenHeight();
+    
+    x += ((screen_w - s->w) >> 1);
+    y += ((screen_h - s->h) >> 1);
+
     if (0 == w && 0 == h) {
-        NDL_DrawRect(s->pixels, x, y, s->w, s->h);
+        NDL_DrawRect((uint32_t *)s->pixels, x, y, s->w, s->h);
     } else {
-        NDL_DrawRect(s->pixels, x, y, w, h);
+        NDL_DrawRect((uint32_t *)s->pixels, x, y, w, h);
     }
 }
 

@@ -11,9 +11,6 @@
 static int32_t evtdev = -1;
 static int32_t fbdev = -1;
 static int32_t screen_w = 0, screen_h = 0;
-static int32_t canvas_w = 0, canvas_h = 0;
-int32_t canvas_x = 0;
-int32_t canvas_y = 0;
 
 static inline int32_t get_value_by_key(char *source, char *key) {
     if (NULL == source || NULL == source) {
@@ -83,11 +80,10 @@ int NDL_PollEvent(char *buf, int len) {
 
 void NDL_OpenCanvas(int *w, int *h) {
     
-    char buf[1024] = {};
+    char buf[256] = {};
     int fd = open("/proc/dispinfo", O_RDONLY);
     lseek(fd, 0, SEEK_SET);
     read(fd, buf, sizeof(buf)/sizeof(buf[0]));
-    printf("%d, buf:%s\n", __LINE__, buf);
     int width = get_value_by_key(buf, "WIDTH");
     int height = get_value_by_key(buf, "HEIGHT");
     
@@ -98,13 +94,8 @@ void NDL_OpenCanvas(int *w, int *h) {
 
     screen_w = width;
     screen_h = height;
-    canvas_w = *w;
-    canvas_h = *h;
-    canvas_x = (screen_w - canvas_w) >> 1;
-    canvas_y = (screen_h - canvas_h) >> 1;
 
     printf("width: %d, height:%d\n", screen_w, screen_h);
-    printf("canvans_x:%d, canvans_y:%d\n", canvas_x, canvas_y);
     
 //   if (getenv("NWM_APP")) {
 //     int fbctl = 4;
@@ -131,10 +122,9 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     int32_t len = 0;
     int32_t pixel_size = sizeof(uint32_t);
     uint8_t *byte_pixels = (uint8_t *)pixels;
-    
-    for (int i = y; i < y + h + 1; ++i) {
-        offset = (screen_w * (i + canvas_y) + canvas_x + x) * pixel_size;
 
+    for (int i = y; i < y + h + 1; ++i) {
+        offset = (screen_w * i + x) * pixel_size;
         lseek(fd, offset, SEEK_SET);
         write(fd,
             byte_pixels + pixel_size * w * i, 
@@ -164,4 +154,13 @@ int NDL_Init(uint32_t flags) {
 }
 
 void NDL_Quit() {
+}
+
+
+int32_t NDL_GetScreenWidth() {
+    return screen_w;
+}
+
+int32_t NDL_GetScreenHeight() {
+    return screen_h;
 }
