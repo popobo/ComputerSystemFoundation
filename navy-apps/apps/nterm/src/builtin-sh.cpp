@@ -27,12 +27,14 @@ static void sh_handle_cmd(const char *cmd) {
     char strip_cmd[cmd_len + 1];
     strcpy(strip_cmd, cmd);
     strip_cmd[cmd_len - 1] = '\0';
-    execve(strip_cmd, NULL, NULL);
+    execvp(strip_cmd, NULL);
 }
 
 void builtin_sh_run() {
   sh_banner();
   sh_prompt();
+  
+  setenv("PATH", "/bin", 0);
 
   while (1) {
     SDL_Event ev;

@@ -94,9 +94,6 @@ void NDL_OpenCanvas(int *w, int *h) {
 
     screen_w = width;
     screen_h = height;
-
-    printf("width: %d, height:%d\n", screen_w, screen_h);
-    
 //   if (getenv("NWM_APP")) {
 //     int fbctl = 4;
 //     fbdev = 5;
