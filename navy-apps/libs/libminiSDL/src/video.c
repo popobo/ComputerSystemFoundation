@@ -72,11 +72,11 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 }
 
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
-    uint32_t screen_w = NDL_GetScreenWidth();
-    uint32_t screen_h = NDL_GetScreenHeight();
+    // uint32_t screen_w = NDL_GetScreenWidth();
+    // uint32_t screen_h = NDL_GetScreenHeight();
     
-    x += ((screen_w - s->w) >> 1);
-    y += ((screen_h - s->h) >> 1);
+    // x += ((screen_w - s->w) >> 1);
+    // y += ((screen_h - s->h) >> 1);
 
     if (0 == w && 0 == h) {
         NDL_DrawRect((uint32_t *)s->pixels, x, y, s->w, s->h);
