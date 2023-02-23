@@ -1,6 +1,13 @@
 #include <common.h>
 #include "fs.h"
 #include "syscall.h"
+#include <proc.h>
+
+// typedef struct {} PCB;
+
+
+void naive_uload(PCB *pcb, const char *filename);
+
 void do_syscall(Context *c) {
   uintptr_t a[4];
   a[0] = c->GPR1;
@@ -16,7 +23,8 @@ void do_syscall(Context *c) {
         break;
     case SYS_exit:
         // Log("SYS_exit!");
-        halt(a[1]);
+        //halt(a[1]);
+        naive_uload(NULL, "/bin/menu");
         break;
     case SYS_write:
         // Log("SYS_write, a[1]:%d, a[3]:%d", a[1], a[3]);
@@ -53,6 +61,9 @@ void do_syscall(Context *c) {
         c->GPRx = 0;
         break;
     }
+    case SYS_execve:
+        naive_uload(NULL, (const char *)a[1]);
+        break;
     case -1:
         Log("ignore unhandled syscall ID -1");
         break;

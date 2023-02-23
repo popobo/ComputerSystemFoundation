@@ -48,9 +48,7 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
     assert(dst != NULL);
-    //assert(dstrect != NULL);
     
-    printf("line: :%d\n", __LINE__);
     SDL_Rect null_dstrect = {};
     if (NULL == dstrect) {
         dstrect = &null_dstrect;
@@ -59,7 +57,6 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
         null_dstrect.w = dst->w;
         null_dstrect.h = dst->h;
     }
-    printf("line: :%d\n", __LINE__);
     
     uint32_t *pixels = (uint32_t *)dst->pixels;
     for (int i = dstrect->y; 

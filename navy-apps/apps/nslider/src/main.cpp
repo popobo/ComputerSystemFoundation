@@ -52,8 +52,14 @@ int main() {
   int rep = 0, g = 0;
 
   render();
+    
+    int is_exit = 0;
 
   while (1) {
+    if (1 == is_exit) {
+        break;
+    }
+
     SDL_Event e;
     SDL_WaitEvent(&e);
 
@@ -80,6 +86,9 @@ int main() {
             rep = 0; g = 0;
           }
           break;
+        case SDLK_E:
+            is_exit = 1;
+            break;
       }
     }
   }
