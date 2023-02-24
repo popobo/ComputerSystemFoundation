@@ -69,5 +69,15 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
-  return NULL;
+    assert(kstack.end != NULL && kstack.start != NULL);
+
+    Context * cp = (Context *)((uintptr_t)kstack.end - sizeof(Context));
+    cp->epc = (uintptr_t)entry;
+    cp->status = 0xc0100; //For DiffTest
+    cp->cause = 0;
+    for (int i = 0; i < sizeof(cp->gpr) / sizeof(cp->gpr[0]); ++i) {
+        cp->gpr[i] = 0;
+    }
+
+    return cp;
 }

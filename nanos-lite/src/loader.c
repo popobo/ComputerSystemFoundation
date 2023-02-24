@@ -57,6 +57,20 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
     pcb->cp = kcontext(kstack, entry, arg);
 }
 
+void context_uload(PCB *pcb, const char *filename) {
+    uintptr_t entry = loader(pcb, filename);
+    assert(pcb != NULL);
+    assert(filename != NULL);
+
+    Area kstack;
+    kstack.start = (void *)&pcb->stack[0];
+    kstack.end = (void *)&pcb->stack[STACK_SIZE];
+
+    pcb->cp = ucontext(NULL, kstack, (void *)entry);
+    // use heap.end as the stack top of user process, and put it in GPRx according to the convention
+    pcb->cp->GPRx = (uintptr_t)heap.end;
+}
+
 void naive_uload(PCB *pcb, const char *filename) {
   uintptr_t entry = loader(pcb, filename);
   Log("Jump to entry = 0x%x", (int64_t)entry);

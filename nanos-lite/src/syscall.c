@@ -17,12 +17,9 @@ void do_syscall(Context *c) {
 
   switch (a[0]) {
     case SYS_exit:
-        // Log("SYS_exit!");
-        //halt(a[1]);
         naive_uload(NULL, "/bin/nterm");
         break;
     case SYS_write:
-        // Log("SYS_write, a[1]:%d, a[3]:%d", a[1], a[3]);
         if (NULL == (void *)a[2]) {
             c->GPRx = -1;
             break;
