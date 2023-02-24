@@ -41,9 +41,8 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 }
 
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-    assert(kstack.end != NULL);
-    printf("(intptr_t)kstack.start:%x, (intptr_t)kstack.end:%x\n", (uintptr_t)kstack.start, (uintptr_t)kstack.end);
-    
+    assert(kstack.end != NULL && kstack.start != NULL);
+
     Context * cp = (Context *)((uintptr_t)kstack.end - sizeof(Context));
     cp->epc = (uintptr_t)entry;
     cp->status = 0xc0100; //For DiffTest
@@ -51,6 +50,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
     for (int i = 0; i < sizeof(cp->gpr) / sizeof(cp->gpr[0]); ++i) {
         cp->gpr[i] = 0;
     }
+    cp->gpr[10] = (uintptr_t)arg;
 
     return cp;
 }

@@ -8,6 +8,7 @@ void raise_intr(DecodeExecState *s, word_t NO, vaddr_t epc) {
     // For riscv32, we save the pc which points to current pc.
     cpu.sepc = cpu.pc;
     cpu.scause = NO;
+    cpu.sstatus = 0xc0100;
     s->jmp_pc = epc;
     s->is_jmp = true;
 }
