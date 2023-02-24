@@ -29,13 +29,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     fs_read(fd, (void *)&ehdr, sizeof(Elf_Ehdr));
     assert(*(uint32_t *)ehdr.e_ident == 0x464C457F);
     assert(ehdr.e_machine == EXPECT_TYPE);
-    // printf("ehdr.e_type %d\n", ehdr.e_type);
-    // printf("ehdr.e_machine: %d\n", ehdr.e_machine);
-    // printf("ehdr.e_version: %d\n", ehdr.e_version);
-    // printf("ehdr.e_phoff: %d\n", ehdr.e_phoff);
-    // printf("ehdr.e_phentsize: %d\n", ehdr.e_phentsize);
-    // printf("ehdr.e_phnum: %d\n", ehdr.e_phnum);
-    // printf("ehdr.e_entry: 0x%x\n", (int64_t)ehdr.e_entry);
     assert(ehdr.e_phoff != 0 && ehdr.e_phnum != 0xffff);
     for (int i = 0; i < ehdr.e_phnum; ++i) {
         fs_lseek(fd, ehdr.e_phoff + sizeof(Elf_Phdr) * i, SEEK_SET);
@@ -44,11 +37,6 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         if (PT_LOAD != phdr.p_type) {
             continue;
         }
-
-        // printf("phdr.p_vaddr: 0x%x\n", (int64_t)phdr.p_vaddr);
-        // printf("phdr.p_offset: %d\n", phdr.p_offset);
-        // printf("phdr.p_filesz: %d\n", phdr.p_filesz);
-        // printf("phdr.p_memsz: %d\n", phdr.p_memsz);
         
         fs_lseek(fd, phdr.p_offset, SEEK_SET);
         fs_read(fd, (void *)phdr.p_vaddr, phdr.p_filesz);
@@ -58,6 +46,16 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     return ehdr.e_entry;
 }
 
+void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
+    assert(pcb != NULL);
+    assert(entry != NULL);
+
+    Area kstack;
+    kstack.start = (void *)&pcb->stack[0];
+    kstack.end = (void *)&pcb->stack[STACK_SIZE];
+
+    pcb->cp = kcontext(kstack, entry, arg);
+}
 
 void naive_uload(PCB *pcb, const char *filename) {
   uintptr_t entry = loader(pcb, filename);

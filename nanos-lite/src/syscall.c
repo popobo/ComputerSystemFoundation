@@ -16,11 +16,6 @@ void do_syscall(Context *c) {
   a[3] = c->GPR4;
 
   switch (a[0]) {
-    case SYS_yield:
-        // Log("SYS_yield!");
-        c->GPRx = 0;
-        yield();
-        break;
     case SYS_exit:
         // Log("SYS_exit!");
         //halt(a[1]);

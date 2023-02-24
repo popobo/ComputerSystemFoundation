@@ -3,6 +3,7 @@
 
 struct Context {
     union {
+        // address space info
         void *pdir;
         uintptr_t gpr[32];
     };

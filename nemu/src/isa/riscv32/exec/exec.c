@@ -162,7 +162,7 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
     //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
     // }
 
-    // if (cpu.pc == 0x83000094) {
+    // if (cpu.pc == 0x80101534) {
     //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
     // }
     // // 83007abc <_exit>:
