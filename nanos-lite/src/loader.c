@@ -57,7 +57,7 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
     pcb->cp = kcontext(kstack, entry, arg);
 }
 
-void context_uload(PCB *pcb, const char *filename) {
+void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
     uintptr_t entry = loader(pcb, filename);
     assert(pcb != NULL);
     assert(filename != NULL);
@@ -68,7 +68,52 @@ void context_uload(PCB *pcb, const char *filename) {
 
     pcb->cp = ucontext(NULL, kstack, (void *)entry);
     // use heap.end as the stack top of user process, and put it in GPRx according to the convention
-    pcb->cp->GPRx = (uintptr_t)heap.end;
+    
+    uintptr_t ustack_top = (uintptr_t)heap.end;
+    size_t argv_num = 0;
+    size_t envp_num = 0;
+    size_t str_len = 0;
+    while(envp[envp_num++] != NULL) {};
+    while(argv[argv_num++] != NULL) {};
+    envp_num--;
+    argv_num--;
+
+    uintptr_t envp_str_pos[envp_num + 1];
+    uintptr_t argv_str_pos[argv_num + 1];
+    
+    for (int i = 0; i < envp_num; ++i) {
+        str_len = strlen(envp[i]) + 1;
+        ustack_top -= str_len;
+        memcpy((void *)ustack_top, envp[i], str_len);
+        envp_str_pos[i] = ustack_top;
+    }
+    envp_str_pos[envp_num] = 0;
+
+    for (int i = 0; i < argv_num; ++i) {
+        str_len = strlen(argv[i]) + 1;
+        ustack_top -= str_len;
+        memcpy((void *)ustack_top, argv[i], str_len);
+        printf("ustack_top:%x\n", ustack_top);
+        argv_str_pos[i] = ustack_top;
+    }
+    argv_str_pos[argv_num] = 0;
+    
+    for (int i = envp_num; i > -1; --i) {
+        ustack_top -= sizeof(uintptr_t);
+        *(uintptr_t *)ustack_top = envp_str_pos[i];
+    }
+
+    for (int i = argv_num; i > -1; --i) {
+        ustack_top -= sizeof(uintptr_t);
+        *(uintptr_t *)ustack_top = argv_str_pos[i];
+    }
+
+    ustack_top -= sizeof(int32_t);
+    *(int32_t *)ustack_top = argv_num;
+
+    pcb->cp->GPRx = ustack_top; // ustack.end
+
+    printf("ustack_top:%x\n", ustack_top);
 }
 
 void naive_uload(PCB *pcb, const char *filename) {
