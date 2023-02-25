@@ -57,6 +57,8 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
     pcb->cp = kcontext(kstack, entry, arg);
 }
 
+#define USER_STACK_PAGES 8
+
 void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
     uintptr_t entry = loader(pcb, filename);
     assert(pcb != NULL);
@@ -69,14 +71,21 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     pcb->cp = ucontext(NULL, kstack, (void *)entry);
     // use heap.end as the stack top of user process, and put it in GPRx according to the convention
     
-    uintptr_t ustack_top = (uintptr_t)heap.end;
+    uintptr_t ustack_top = (uintptr_t)new_page(USER_STACK_PAGES);
     size_t argv_num = 0;
     size_t envp_num = 0;
     size_t str_len = 0;
-    while(envp[envp_num++] != NULL) {};
-    while(argv[argv_num++] != NULL) {};
-    envp_num--;
-    argv_num--;
+    if (envp != NULL) {
+        while(envp[envp_num++] != NULL) {};
+        envp_num--;
+    }
+    
+    if (argv != NULL) {
+        while(argv[argv_num++] != NULL) {};
+        argv_num--;
+    }
+
+    printf("envp_num:%d\n, argv_num:%d\n", (int32_t)envp_num, (int32_t)argv_num);
 
     uintptr_t envp_str_pos[envp_num + 1];
     uintptr_t argv_str_pos[argv_num + 1];

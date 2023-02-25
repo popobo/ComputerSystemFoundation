@@ -3,7 +3,7 @@
 static void *pf = NULL;
 
 void* new_page(size_t nr_page) {
-  return NULL;
+    return (void *)((uintptr_t)pf + nr_page * PGSIZE);
 }
 
 static inline void* pg_alloc(int n) {

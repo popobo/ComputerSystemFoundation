@@ -5,8 +5,10 @@
 
 // typedef struct {} PCB;
 
-
+extern PCB *current;
+void switch_boot_pcb();
 void naive_uload(PCB *pcb, const char *filename);
+void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
 
 void do_syscall(Context *c) {
   uintptr_t a[4];
@@ -54,7 +56,9 @@ void do_syscall(Context *c) {
         break;
     }
     case SYS_execve:
-        naive_uload(NULL, (const char *)a[1]);
+        context_uload(current, (const char *)a[1], (char * const*)a[2], (char * const*)a[3]);
+        switch_boot_pcb();
+        yield();
         break;
     case -1:
         Log("ignore unhandled syscall ID -1");

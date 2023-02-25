@@ -26,9 +26,8 @@ void hello_fun(void *arg) {
 
 void init_proc() {
     context_kload(&pcb[0], hello_fun, "hello!");
-    char *argv[] = {"111", "2222", "33333", NULL};
-    char *envp[] = {"aaa", "bbbb", "ccccc", NULL};
-    context_uload(&pcb[1], "/bin/bird", argv, envp);
+    char *argv[] = { "/bin/exec-test", NULL };
+    context_uload(&pcb[1], "/bin/exec-test", argv, NULL);
     switch_boot_pcb();
 }
 
