@@ -18,9 +18,13 @@ void do_syscall(Context *c) {
   a[3] = c->GPR4;
 
   switch (a[0]) {
-    case SYS_exit:
-        naive_uload(NULL, "/bin/nterm");
-        break;
+    case SYS_exit: {
+            char *argv[] = { "/bin/menu", NULL };
+            context_uload(current, "/bin/menu", argv, NULL);
+            switch_boot_pcb();
+            yield();
+            break;
+        }
     case SYS_write:
         if (NULL == (void *)a[2]) {
             c->GPRx = -1;

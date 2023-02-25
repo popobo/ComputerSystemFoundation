@@ -16,18 +16,18 @@ void switch_boot_pcb() {
 }
 
 void hello_fun(void *arg) {
-  //int j = 1;
+  int j = 1;
   while (1) {
-    //Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", (uintptr_t)arg, j);
-    //j ++;
+    Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", (uintptr_t)arg, j);
+    j ++;
     yield();
   }
 }
 
 void init_proc() {
     context_kload(&pcb[0], hello_fun, "hello!");
-    char *argv[] = { "/bin/exec-test", NULL };
-    context_uload(&pcb[1], "/bin/exec-test", argv, NULL);
+    char *argv[] = { "/bin/menu", NULL };
+    context_uload(&pcb[1], "/bin/menu", argv, NULL);
     switch_boot_pcb();
 }
 
