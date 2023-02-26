@@ -29,8 +29,8 @@ void hello_fun(void *arg) {
 
 void init_proc() {
     context_kload(&pcb[0], hello_fun, "hello!");
-    char *argv[] = { "/bin/menu", NULL };
-    context_uload(&pcb[1], "/bin/menu", argv, NULL);
+    char *argv[] = { "/bin/nterm", NULL };
+    context_uload(&pcb[1], "/bin/nterm", argv, NULL);
     switch_boot_pcb();
 }
 

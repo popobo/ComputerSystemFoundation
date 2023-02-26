@@ -23,6 +23,10 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     assert(filename != NULL);
     
     int fd = fs_open(filename, 0, 0);
+    if (fd < 0) {
+        return 0;
+    }
+
     Elf_Ehdr ehdr = {};
     Elf_Phdr phdr = {};
 
@@ -59,12 +63,11 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
 
 #define USER_STACK_PAGES 8
 
-void context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
+int32_t context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
     assert(pcb != NULL);
     assert(filename != NULL);
 
     // use heap.end as the stack top of user process, and put it in GPRx according to the convention
-    
     uintptr_t ustack_top = (uintptr_t)new_page(USER_STACK_PAGES);
     size_t argv_num = 0;
     size_t envp_num = 0;
@@ -112,6 +115,9 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
     *(int32_t *)ustack_top = argv_num;
 
     uintptr_t entry = loader(pcb, filename);
+    if (0 == entry) {
+        return -1;
+    }
 
     Area kstack;
     kstack.start = (void *)&pcb->stack[0];
@@ -119,8 +125,8 @@ void context_uload(PCB *pcb, const char *filename, char *const argv[], char *con
 
     pcb->cp = ucontext(NULL, kstack, (void *)entry);
     pcb->cp->GPRx = ustack_top; // ustack.end
-
-    printf("ustack_top:%x\n", ustack_top);
+    
+    return 0;
 }
 
 void naive_uload(PCB *pcb, const char *filename) {
