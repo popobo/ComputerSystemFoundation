@@ -20,8 +20,9 @@ int mm_brk(uintptr_t brk) {
 }
 
 void init_mm() {
-  pf = (void *)ROUNDUP(heap.start, PGSIZE);
-  Log("free physical pages starting from %x", pf);
+    //set the heap start address provided by TRM as the first address of the free physical page 
+    pf = (void *)ROUNDUP(heap.start, PGSIZE);
+    Log("free physical pages starting from %x", pf);
 
 #ifdef HAS_VME
   vme_init(pg_alloc, free_page);

@@ -32,9 +32,11 @@
 #define FB_ADDR         0xa0000000
 #define AUDIO_SBUF_ADDR 0xa0800000
 
+// riscv32 _pmem_start = 0x80000000
 extern char _pmem_start;
 #define PMEM_SIZE (128 * 1024 * 1024)
 #define PMEM_END  ((uintptr_t)&_pmem_start + PMEM_SIZE)
+// _pmem_start = 0x80000000, 0x80001000
 #define NEMU_PADDR_SPACE \
   RANGE(&_pmem_start, PMEM_END), \
   RANGE(FB_ADDR, FB_ADDR + 0x200000), \

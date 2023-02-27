@@ -35,7 +35,9 @@ typedef struct {
 // and arch-dependent @ptr
 typedef struct {
   int pgsize;
+  // represents the range of user states in the virtual address space
   Area area;
+  // Is an ISA-related address space description pointer
   void *ptr;
 } AddrSpace;
 
@@ -62,9 +64,14 @@ void     iset        (bool enable);
 Context *kcontext    (Area kstack, void (*entry)(void *), void *arg);
 
 // ----------------------- VME: Virtual Memory -----------------------
+// pgalloc is used to alloc a physical page
+// pgfree is used to free a physical page
 bool     vme_init    (void *(*pgalloc)(int), void (*pgfree)(void *));
 void     protect     (AddrSpace *as);
 void     unprotect   (AddrSpace *as);
+// va is a virtual address, va_page is the virtual page where the va is located.
+// pa is a physical address, pa_page is the physical page where the pa is located
+// map will map va_page to pa_page
 void     map         (AddrSpace *as, void *vaddr, void *paddr, int prot);
 Context *ucontext    (AddrSpace *as, Area kstack, void *entry);
 
