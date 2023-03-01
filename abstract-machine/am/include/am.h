@@ -38,6 +38,7 @@ typedef struct {
   // represents the range of user states in the virtual address space
   Area area;
   // Is an ISA-related address space description pointer
+  // address of pa
   void *ptr;
 } AddrSpace;
 

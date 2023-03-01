@@ -7,7 +7,10 @@ void* new_page(size_t nr_page) {
 }
 
 static inline void* pg_alloc(int n) {
-  return NULL;
+    // AM make sure that n is always the multiple of PGSIZE
+    void *pg = (void *)((uintptr_t)pf + n);
+    memset(pg, 0, n);
+    return pg;
 }
 
 void free_page(void *p) {

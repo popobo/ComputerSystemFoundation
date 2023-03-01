@@ -25,6 +25,32 @@ word_t isa_reg_str2val(const char *name, bool *success);
 vaddr_t isa_exec_once();
 
 // memory
+
+#define PT_BASE_ADDR_LR (10)
+#define VPN_LEN (10)
+#define PG_OFFSET_LEN (12)
+
+union PTE {
+    uint32_t V: 1;
+    uint32_t R: 1;
+    uint32_t W: 1;
+    uint32_t X: 1;
+    uint32_t U: 1;
+    uint32_t G: 1;
+    uint32_t A: 1;
+    uint32_t D: 1;
+    uint32_t RSW: 2;
+    union  
+    {
+        struct 
+        {    
+            uint32_t PPN_0: 10;
+            uint32_t PPN_1: 12;
+        };
+        uint32_t PPN_01: 22; 
+    } PPN_01;
+};
+
 enum { MEM_TYPE_IFETCH, MEM_TYPE_READ, MEM_TYPE_WRITE };
 enum { MEM_RET_OK, MEM_RET_NEED_TRANSLATE, MEM_RET_FAIL, MEM_RET_CROSS_PAGE };
 paddr_t isa_mmu_translate(vaddr_t vaddr, int type, int len);
