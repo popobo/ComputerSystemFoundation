@@ -119,6 +119,7 @@ static inline def_EHelper(csrrw) {
     EX(0x105, csrrw_stvec)
     EX(0x141, csrrw_sepc)
     EX(0x142, csrrw_scause)
+    EX(0x180, csrrw_satp)
     default: exec_inv(s);
     }
 }
@@ -130,8 +131,8 @@ static inline def_EHelper(csrrs) {
     EX(0x105, csrrs_stvec)
     EX(0x141, csrrs_sepc)
     EX(0x142, csrrs_scause)
-    default:
-        break;
+    EX(0x180, csrrs_satp)
+    default: exec_inv(s);
     }
 }
 
@@ -143,7 +144,6 @@ static inline def_EHelper(csrr) {
     EX(0b010, csrrs)
     // EX(0b010, csrrs)
     // EX(0b011, csrrc)
-    
     default: exec_inv(s);
     }
 }
@@ -162,9 +162,9 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
     //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
     // }
 
-    // if (cpu.pc == 0x80101534) {
-    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    // }
+    if (cpu.pc == 0x801018d0) {
+        printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
+    }
     // // 83007abc <_exit>:
     // // 83007abc:	00000893          	li	a7,0
     // if (cpu.pc == 0x83007abc) {
