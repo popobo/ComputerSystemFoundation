@@ -11,6 +11,7 @@ struct Context {
     uintptr_t cause;
     uintptr_t status;
     uintptr_t epc;
+    uintptr_t satp;
 };
 
 #define GPR1 gpr[17] // a7
