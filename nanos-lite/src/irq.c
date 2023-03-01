@@ -4,16 +4,17 @@ void do_syscall(Context *c);
 Context* schedule(Context *prev);
 
 static Context* do_event(Event e, Context* c) {
-  switch (e.event) {
-    case EVENT_SYSCALL:
-        do_syscall(c);
-    case EVENT_YIELD:
-        c = schedule(c);
-        break;
-    default: panic("Unhandled event ID = %d", e.event);
-  }
+    assert(c != NULL);
+    switch (e.event) {
+        case EVENT_SYSCALL:
+            do_syscall(c);
+        case EVENT_YIELD:
+            c = schedule(c);
+            break;
+        default: panic("Unhandled event ID = %d", e.event);
+    }
 
-  return c;
+    return c;
 }
 
 void init_irq(void) {

@@ -8,6 +8,8 @@
 static Context* (*user_handler)(Event, Context*) = NULL;
 
 Context* __am_irq_handle(Context *c) {
+    printf("c: %x\n", (uintptr_t)c);
+    printf("c: %d\n", c->satp);
     if (user_handler) {
         Event ev = {0};
         switch (c->cause) {

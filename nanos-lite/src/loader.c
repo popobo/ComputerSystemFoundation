@@ -64,9 +64,10 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
 #define USER_STACK_PAGES 8
 
 int32_t context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
+    printf("__LINE__: %d\n", __LINE__);
     assert(pcb != NULL);
     assert(filename != NULL);
-
+    printf("__LINE__: %d\n", __LINE__);
     // use heap.end as the stack top of user process, and put it in GPRx according to the convention
     uintptr_t ustack_top = (uintptr_t)new_page(USER_STACK_PAGES);
     size_t argv_num = 0;
@@ -116,14 +117,16 @@ int32_t context_uload(PCB *pcb, const char *filename, char *const argv[], char *
 
     uintptr_t entry = loader(pcb, filename);
     if (0 == entry) {
+        printf("__LINE__: %d\n", __LINE__);
         return -1;
     }
 
     Area kstack;
     kstack.start = (void *)&pcb->stack[0];
     kstack.end = (void *)&pcb->stack[STACK_SIZE];
-
+    printf("__LINE__: %d\n", __LINE__);
     pcb->cp = ucontext(NULL, kstack, (void *)entry);
+    printf("pcb->cp: %x\n", pcb->cp);
     pcb->cp->GPRx = ustack_top; // ustack.end
     
     return 0;
