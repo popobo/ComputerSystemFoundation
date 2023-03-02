@@ -31,53 +31,39 @@ static inline bool in_pmem(paddr_t addr) {
 
 static inline word_t pmem_read(paddr_t addr, int len) {
     void *p = &pmem[addr - PMEM_BASE];
-
-    // if (addr == 0x80cb3800) {
-    //     printf("read : addr:%x, value:%d\n", addr, *(uint32_t *)p);
-    // }
-  switch (len) {
-    case 1: return *(uint8_t  *)p;
-    case 2: return *(uint16_t *)p;
-    case 4: return *(uint32_t *)p;
-#ifdef ISA64
-    case 8: return *(uint64_t *)p;
-#endif
-    //default: assert(0);
-  }
-  return 0;
+    switch (len) {
+        case 1: return *(uint8_t  *)p;
+        case 2: return *(uint16_t *)p;
+        case 4: return *(uint32_t *)p;
+    #ifdef ISA64
+        case 8: return *(uint64_t *)p;
+    #endif
+        //default: assert(0);
+    }
+    return 0;
 }
 
 static inline void pmem_write(paddr_t addr, word_t data, int len) {
-    // if (addr == 0x80cb3800) {
-    //     printf("write : addr:%x, data:%d\n", addr, data);
-    // }
-  void *p = &pmem[addr - PMEM_BASE];
-  switch (len) {
-    case 1: *(uint8_t  *)p = data; return;
-    case 2: *(uint16_t *)p = data; return;
-    case 4: *(uint32_t *)p = data; return;
-#ifdef ISA64
-    case 8: *(uint64_t *)p = data; return;
-#endif
-    default: assert(0);
-  }
+    void *p = &pmem[addr - PMEM_BASE];
+    switch (len) {
+        case 1: *(uint8_t  *)p = data; return;
+        case 2: *(uint16_t *)p = data; return;
+        case 4: *(uint32_t *)p = data; return;
+    #ifdef ISA64
+        case 8: *(uint64_t *)p = data; return;
+    #endif
+        default: assert(0);
+    }
 }
 
 /* Memory accessing interfaces */
 
 inline word_t paddr_read(paddr_t addr, int len) {
-    // if (cpu.satp > 0 && addr == 0x80cb06a8) {
-    //     printf("paddr_read len:%d\n", len);
-    // }
-  // in_pmem is to check whether addr is legal
   if (in_pmem(addr)) return pmem_read(addr, len);
   else return map_read(addr, len, fetch_mmio_map(addr));
 }
 
 inline void paddr_write(paddr_t addr, word_t data, int len) {
-    // if (cpu.satp > 0 && addr == 0x80cb06a8) {
-    //     printf("paddr_write len:%d, data:%x\n", len, data);
-    // }
   if (in_pmem(addr)) pmem_write(addr, data, len);
   else map_write(addr, data, len, fetch_mmio_map(addr));
 }

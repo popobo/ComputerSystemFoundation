@@ -148,73 +148,8 @@ static inline def_EHelper(csrr) {
     }
 }
 
-// cpu.pc:0x830004bc, s->isa.instr.val:0x50413
-// cpu.pc:0x830004c0, s->isa.instr.val:0x2097
-// cpu.pc:0x830004c4, s->isa.instr.val:0xb0c080e7 // 1011 0000 1100 00001  000  00001  1100111
-// cpu.pc:0x82ffffd4, s->isa.instr.val:0x17f6bb15
-// static int32_t count = 0;
-// static int32_t count2 = 0;
 static inline void fetch_decode_exec(DecodeExecState *s) {
-    // fetch instruction
-    // pc is 4 bytes(32bits)
-    // val is the same as opcode1_0 because of union
-    // if (cpu.satp > 0) {
-    //     vaddr_read(0x80101a88, 4);
-    // }
     s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
-    // if (cpu.pc > 0x83000000) {
-    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    // }
-    
-    // if (cpu.pc > 0x80101c44) {
-    //     printf("cpu.gpr[9]._32:%x\n", cpu.gpr[9]._32);
-    // }
-    
-    // if (cpu.gpr[9]._32 == 0x80103f88) {
-    //     count++;
-    // }
-
-    // if (count == 485) {
-    //     printf("---------\n");
-    //     count2++;
-    //     count = 0;
-    // }
-
-    // if (count2 == 2) {
-    //     if (cpu.pc == 0x80101d14) {
-    //         printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    //     }
-    // }
-
-    // if (cpu.satp > 0) {
-    //     if (cpu.pc == 0x80101c58) {
-    //         printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    //     }
-    //     if (cpu.pc == 0x80101d10) {
-    //         printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    //     }
-    //     if (cpu.pc == 0x80101d14) {
-    //         printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    //     }
-    // }
-    // if (cpu.pc == 0x80101d18) {
-        
-    //     if (cpu.gpr[9]._32 == 0x80103fa1) {
-    //         printf("cpu1.pc:0x%x, s->isa.instr.val:0x%x, cpu.gpr[9]:%x\n", cpu.pc, s->isa.instr.val, cpu.gpr[9]._32);
-    //     }
-    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x, cpu.gpr[9]:%x\n", cpu.pc, s->isa.instr.val, cpu.gpr[9]._32);
-    // }
-    // // 83007abc <_exit>:
-    // // 83007abc:	00000893          	li	a7,0
-    // if (cpu.pc == 0x83007abc) {
-    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    // }
-
-    // // 83007aa4 <_syscall_>:
-    // // 83007aa4:	00050893          	mv	a7,a0
-    // if (cpu.pc == 0x83007aa4) {
-    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    // }
 
     Assert(s->isa.instr.i.opcode1_0 == 0x3, "Invalid instruction");
     switch (s->isa.instr.i.opcode6_2) {
