@@ -86,10 +86,6 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 
         struct PTE *pt_pte = (struct PTE*)(pt + (va_page_index % PTE_NUM));
 
-        if (pt_pte->PTE_uo.union_01.V != 0) {
-            printf("va:%x\n", (uint32_t)va);
-            printf("pt_pte->PTE_uo.union_01.V != 0\n");
-        }
         assert(pt_pte->PTE_uo.union_01.V == 0);
         pt_pte->PTE_uo.val = ((uint32_t)pa / PGSIZE) << RSW_DAGUXWRV_LEN;
         // set DAGUXWRV
@@ -119,7 +115,6 @@ Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
         cp->gpr[i] = 0;
     }
     cp->pdir = as->ptr;
-    printf("ucontext, cp->gpr[0]:%x\n", cp->gpr[0]);
 
     return cp;
 }

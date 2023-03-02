@@ -102,10 +102,6 @@ paddr_t isa_mmu_translate(vaddr_t addr, int type, int len) {
     struct PA pa = {};
     pa.pa_no.fields.PPN_01 = pte_page_frame.PTE_uo.union_01.PPN_01;
     pa.pa_no.fields.page_offset = va.va_no.fields.page_offset;
-    
-    // if (addr < 0x80000000) {
-    //     printf("addr:%x, pa.pa_no.val:%x\n", addr, pa.pa_no.val);
-    // }
 
     return pa.pa_no.val;
 }

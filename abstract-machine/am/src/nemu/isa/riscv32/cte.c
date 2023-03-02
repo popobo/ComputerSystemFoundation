@@ -12,13 +12,11 @@ void __am_switch(Context *c);
 
 Context* __am_irq_handle(Context *c) {
     __am_get_cur_as(c);
-    printf("__am_irq_handle 1 (uint32_t)c->pdir:%x, c->gpr[0]:%x\n", (uint32_t)c->pdir, c->gpr[0]);
     if (user_handler) {
         Event ev = {0};
         switch (c->cause) {
             case ENV_CALL_S:
                 if (-1 == sys_call_num) {
-                    printf("1 == sys_call_num\n");
                     ev.event = EVENT_YIELD;  
                     break;
                 }
@@ -30,7 +28,6 @@ Context* __am_irq_handle(Context *c) {
         c = user_handler(ev, c);
         assert(c != NULL);
     }
-    printf("__am_irq_handle 2 (uint32_t)c->pdir:%x\n", (uint32_t)c->pdir);
     __am_switch(c);
     return c;
 }
