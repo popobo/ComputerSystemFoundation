@@ -7,12 +7,18 @@
 
 static Context* (*user_handler)(Event, Context*) = NULL;
 
+void __am_get_cur_as(Context *c);
+void __am_switch(Context *c);
+
 Context* __am_irq_handle(Context *c) {
+    __am_get_cur_as(c);
+    printf("__am_irq_handle 1 (uint32_t)c->pdir:%x, c->gpr[0]:%x\n", (uint32_t)c->pdir, c->gpr[0]);
     if (user_handler) {
         Event ev = {0};
         switch (c->cause) {
             case ENV_CALL_S:
                 if (-1 == sys_call_num) {
+                    printf("1 == sys_call_num\n");
                     ev.event = EVENT_YIELD;  
                     break;
                 }
@@ -24,11 +30,12 @@ Context* __am_irq_handle(Context *c) {
         c = user_handler(ev, c);
         assert(c != NULL);
     }
-
+    printf("__am_irq_handle 2 (uint32_t)c->pdir:%x\n", (uint32_t)c->pdir);
+    __am_switch(c);
     return c;
 }
 
-extern void __am_asm_trap(void);
+void __am_asm_trap(void);
 
 bool cte_init(Context*(*handler)(Event, Context*)) {
   // initialize exception entry
@@ -51,6 +58,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
         cp->gpr[i] = 0;
     }
     cp->gpr[10] = (uintptr_t)arg;
+    cp->pdir = NULL;
 
     return cp;
 }

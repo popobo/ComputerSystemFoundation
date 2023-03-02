@@ -8,11 +8,11 @@ void* new_page(size_t nr_page) {
     return result;
 }
 
-static inline void* pg_alloc(int n) {
+static inline void* pg_alloc(int bytes_num) {
     // AM make sure that n is always the multiple of PGSIZE
-    void *pg = (void *)((uintptr_t)pf + n);
-    memset(pg, 0, n);
-    pf = (void *)((uintptr_t)pf + n);
+    void *pg = (void *)((uintptr_t)pf + bytes_num);
+    memset(pg, 0, bytes_num);
+    pf = (void *)((uintptr_t)pf + bytes_num);
     return pg;
 }
 
@@ -22,6 +22,7 @@ void free_page(void *p) {
 
 /* The brk() system call handler. */
 int mm_brk(uintptr_t brk) {
+    
   return 0;
 }
 

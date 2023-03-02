@@ -21,7 +21,8 @@ static inline void set_satp(void *pdir) {
 static inline uintptr_t get_satp() {
   uintptr_t satp;
   asm volatile("csrr %0, satp" : "=r"(satp));
-  return satp << SATP_PPN_LEN;
+  // Remember here
+  return satp << 12;
 }
 
 bool vme_init(void* (*pgalloc_f)(int), void (*pgfree_f)(void*)) {
@@ -85,6 +86,10 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 
         struct PTE *pt_pte = (struct PTE*)(pt + (va_page_index % PTE_NUM));
 
+        if (pt_pte->PTE_uo.union_01.V != 0) {
+            printf("va:%x\n", (uint32_t)va);
+            printf("pt_pte->PTE_uo.union_01.V != 0\n");
+        }
         assert(pt_pte->PTE_uo.union_01.V == 0);
         pt_pte->PTE_uo.val = ((uint32_t)pa / PGSIZE) << RSW_DAGUXWRV_LEN;
         // set DAGUXWRV
@@ -103,6 +108,7 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
+    assert(as != NULL);
     assert(kstack.end != NULL && kstack.start != NULL);
 
     Context * cp = (Context *)((uintptr_t)kstack.end - sizeof(Context));
@@ -112,6 +118,8 @@ Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
     for (int i = 0; i < sizeof(cp->gpr) / sizeof(cp->gpr[0]); ++i) {
         cp->gpr[i] = 0;
     }
+    cp->pdir = as->ptr;
+    printf("ucontext, cp->gpr[0]:%x\n", cp->gpr[0]);
 
     return cp;
 }

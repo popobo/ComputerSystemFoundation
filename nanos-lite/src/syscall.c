@@ -18,11 +18,17 @@ void do_syscall(Context *c) {
   a[3] = c->GPR4;
 
   switch (a[0]) {
+    case SYS_yield:
+        // Log("SYS_yield!");
+        c->GPRx = 0;
+        yield();
+        break;
     case SYS_exit: {
-            char *argv[] = { "/bin/nterm", NULL };
-            context_uload(current, "/bin/nterm", argv, NULL);
-            switch_boot_pcb();
-            yield();
+            halt(0);
+            // char *argv[] = { "/bin/nterm", NULL };
+            // context_uload(current, "/bin/nterm", argv, NULL);
+            // switch_boot_pcb();
+            // yield();
             break;
         }
     case SYS_write:

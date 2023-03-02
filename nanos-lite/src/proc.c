@@ -28,9 +28,11 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-    context_kload(&pcb[0], hello_fun, "hello!");
-    char *argv[] = { "/bin/nterm", NULL };
-    context_uload(&pcb[1], "/bin/nterm", argv, NULL);
+    char *argv[] = { "/bin/dummy", NULL };
+    context_uload(&pcb[0], "/bin/dummy", argv, NULL);
+    printf("pcb[0].cp->pdir:%x\n", pcb[0].cp->pdir);
+    context_uload(&pcb[1], "/bin/dummy", argv, NULL);
+    printf("pcb[1].cp->pdir:%x\n", pcb[1].cp->pdir);
     switch_boot_pcb();
 }
 
