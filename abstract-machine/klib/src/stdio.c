@@ -7,6 +7,8 @@
  
 #define PRINT_BUF_SIZE 2048
 
+static char buf[PRINT_BUF_SIZE] = {0};
+static  char temp_buf[128] = {0};
 // current only support Decimal
 static inline int itoa(int64_t num, char *dest, int base) {
     int offset = 0;
@@ -65,8 +67,6 @@ static inline int printf_tool(char *out, const char *fmt, va_list args) {
     int length_integer_str = 0;
 
     char * str = NULL;
-    
-    char temp_buf[128] = {0};
 
     while (fmt[fmt_index] != '\0') {
         cmp = strncmp(fmt + fmt_index, "%d", 2);
@@ -130,7 +130,6 @@ static inline int printf_tool(char *out, const char *fmt, va_list args) {
 }
 
 int printf(const char *fmt, ...) {
-    char buf[PRINT_BUF_SIZE] = {0};
     
     size_t out_index = 0;
 

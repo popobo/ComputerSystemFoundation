@@ -1,4 +1,5 @@
 #include <memory.h>
+#include <proc.h>
 
 static void *pf = NULL;
 
@@ -20,10 +21,30 @@ void free_page(void *p) {
   panic("not implement yet");
 }
 
-/* The brk() system call handler. */
 int mm_brk(uintptr_t brk) {
-    
-  return 0;
+    if (current->max_brk == 0) {
+        current->max_brk = brk;
+        return 0;
+    }
+
+    uint32_t alloc_size = brk - current->max_brk;
+    // how to allocate physical address
+    uint32_t paup = (uint32_t)pg_alloc(alloc_size);
+    uint32_t padown = paup + alloc_size;
+
+    uint32_t vaup = (uint32_t)current->max_brk;
+    uint32_t vadown = (uint32_t)brk;
+
+    printf("paup:%x, padown:%x, vaup:%x, vadown:%x\n", paup, padown, vaup, vadown);
+
+    while (padown <= paup) {
+        map(&(current->as), (void *)vadown, (void *)padown, 1);
+        vadown += PGSIZE;
+        padown += PGSIZE;
+    }
+
+    current->max_brk = brk;
+    return 0;
 }
 
 void init_mm() {

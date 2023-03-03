@@ -85,11 +85,14 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
         PTE *pt = (PTE *)(dir_pte->PTE_uo.union_01.PPN_01 * PGSIZE);
 
         struct PTE *pt_pte = (struct PTE*)(pt + (va_page_index % PTE_NUM));
-
-        assert(pt_pte->PTE_uo.union_01.V == 0);
-        pt_pte->PTE_uo.val = ((uint32_t)pa / PGSIZE) << RSW_DAGUXWRV_LEN;
-        // set DAGUXWRV
-        pt_pte->PTE_uo.val |= PTE_V;
+        
+        if (0 == pt_pte->PTE_uo.union_01.V) {
+            pt_pte->PTE_uo.val = ((uint32_t)pa / PGSIZE) << RSW_DAGUXWRV_LEN;
+            // set DAGUXWRV
+            pt_pte->PTE_uo.val |= PTE_V;
+        } else {
+            printf("pt_pte: %x is mapped \n", (uint32_t)pt_pte);
+        }
     } else {
         PTE* new_pt = (PTE*)(pgalloc_usr(PGSIZE));
        

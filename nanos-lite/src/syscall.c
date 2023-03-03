@@ -9,6 +9,7 @@ extern PCB *current;
 void switch_boot_pcb();
 void naive_uload(PCB *pcb, const char *filename);
 int32_t context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
+int mm_brk(uintptr_t brk);
 
 void do_syscall(Context *c) {
   uintptr_t a[4];
@@ -19,7 +20,6 @@ void do_syscall(Context *c) {
 
   switch (a[0]) {
     case SYS_yield:
-        // Log("SYS_yield!");
         c->GPRx = 0;
         yield();
         break;
@@ -49,8 +49,10 @@ void do_syscall(Context *c) {
         break;
     case SYS_close:
         c->GPRx = fs_close(a[1]);
+        // Remember here, we miss a break
+        break;
     case SYS_brk:
-        c->GPRx = 0;
+        c->GPRx = mm_brk(a[1]);
         break;
     case SYS_gettimeofday: {
         long *tv = (long *)a[1];
