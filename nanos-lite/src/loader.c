@@ -20,6 +20,7 @@
 #endif
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
+    printf("-------------------------------------------------\n");
     assert(filename != NULL);
     
     int fd = fs_open(filename, 0, 0);
@@ -35,7 +36,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     assert(*(uint32_t *)ehdr.e_ident == 0x464C457F);
     assert(ehdr.e_machine == EXPECT_TYPE);
     assert(ehdr.e_phoff != 0 && ehdr.e_phnum != 0xffff);
-    
+
     for (int i = 0; i < ehdr.e_phnum; ++i) {
         fs_lseek(fd, ehdr.e_phoff + sizeof(Elf_Phdr) * i, SEEK_SET);
         fs_read(fd, &phdr, sizeof(Elf_Phdr));
@@ -60,6 +61,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
             unload_filesz -= read_len;
 
             if (load_len < PGSIZE) {
+                printf("loader memset\n");
                 memset((void *)((uint32_t)pa + load_len), 0, PGSIZE - load_len);
             }
 
@@ -68,6 +70,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
         }
     }
 
+    printf("*****************************************************\n");
     fs_close(fd);
 
     return ehdr.e_entry;
@@ -81,6 +84,7 @@ void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
     kstack.start = (void *)&pcb->stack[0];
     kstack.end = (void *)&pcb->stack[STACK_SIZE];
 
+    pcb->max_brk = 0;
     pcb->cp = kcontext(kstack, entry, arg);
 }
 
@@ -92,7 +96,8 @@ int32_t context_uload(PCB *pcb, const char *filename, char *const argv[], char *
 
     // generate user space
     protect(&(pcb->as));
-    printf("pcb->as.ptr:%x\n", (uint32_t)pcb->as.ptr);
+
+    pcb->max_brk = 0;
 
     uintptr_t ustack_top = (uintptr_t)new_page(USER_STACK_PAGES);
     

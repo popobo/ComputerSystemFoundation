@@ -88,7 +88,14 @@ paddr_t isa_mmu_translate(vaddr_t addr, int type, int len) {
     
     pte_page_table.PTE_uo.val = paddr_read(page_dir_address + va.va_no.fields.VPN_1 * 4, 4);
 
+    if(pte_page_table.PTE_uo.val == 0) {
+        printf("addr:%x\n", addr);
+    }
     assert(pte_page_table.PTE_uo.val != 0);
+    if(pte_page_table.PTE_uo.union_01.V != 1) {
+        printf("page_dir_address + va.va_no.fields.VPN_1 * 4:%x\n", page_dir_address + va.va_no.fields.VPN_1 * 4);
+        printf("addr:%x, pte_page_table.PTE_uo.val:%x\n", addr, pte_page_table.PTE_uo.val);
+    }
     assert(pte_page_table.PTE_uo.union_01.V == 1);
 
     level -= 1;
@@ -103,5 +110,10 @@ paddr_t isa_mmu_translate(vaddr_t addr, int type, int len) {
     pa.pa_no.fields.PPN_01 = pte_page_frame.PTE_uo.union_01.PPN_01;
     pa.pa_no.fields.page_offset = va.va_no.fields.page_offset;
 
+
+    if(pte_page_table.PTE_uo.union_01.V != 1) {
+        printf("addr:%x, pa.pa_no.val:%x\n", addr, pa.pa_no.val);
+        printf("paddr_read(pa.pa_no.val, 4):%x\n", paddr_read(pa.pa_no.val, 4)); 
+    }
     return pa.pa_no.val;
 }

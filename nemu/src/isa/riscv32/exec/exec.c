@@ -148,8 +148,17 @@ static inline def_EHelper(csrr) {
     }
 }
 
+static int flag = 0;
 static inline void fetch_decode_exec(DecodeExecState *s) {
     s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
+
+    // if (cpu.pc < 0x80000000) {
+    //     flag = 1;
+    // }
+    
+    // if (flag == 1) {
+    //     printf("cpu.pc:%x\n", cpu.pc);
+    // }
 
     Assert(s->isa.instr.i.opcode1_0 == 0x3, "Invalid instruction");
     switch (s->isa.instr.i.opcode6_2) {
@@ -166,6 +175,18 @@ static inline void fetch_decode_exec(DecodeExecState *s) {
         EX   (0b11010, nemu_trap)
         default: exec_inv(s);
     }
+    // if (s->jmp_pc == 0x8010234c && s->is_jmp == true) {
+    //     flag++;
+    //     printf("cpu.pc:%x, flag:%d, sp->\n", cpu.pc, flag, cpu.gpr[2]);
+    // }
+    if ((cpu.gpr[2]._32 < 0x807f1000 || cpu.gpr[2]._32 > 0x807f9000) && flag != 1 && cpu.pc > 0x80100010) {
+        flag = 1;
+        printf(" %x, cpu.gpr[2]._32, sp:%x\n", cpu.pc, cpu.gpr[2]._32);
+    }
+
+    // if (cpu.pc == 0x8010038c) {
+    //     printf("cpu.gpr[2]._32, sp:%x\n", cpu.gpr[2]._32);
+    // }
 }
 
 static inline void reset_zero() {

@@ -74,7 +74,12 @@ void __am_switch(Context *c) {
 
 void map(AddrSpace *as, void *va, void *pa, int prot) {
     assert(as != NULL);
-
+    if (prot > 0) {
+        printf("(uint32_t)va:%x, (uint32_t)pa:%x\n", (uint32_t)va, (uint32_t)pa);
+    }
+    if ((uint32_t)va >= 0x80102000 && (uint32_t)va <= 0x80103000) {
+        printf("(uint32_t)va:%x, (uint32_t)pa:%x\n", (uint32_t)va, (uint32_t)pa);
+    }
     uint32_t va_page_index = (uintptr_t)va / PGSIZE;
     uint32_t va_page_dir_index = va_page_index  >> VPN_LEN;
 
@@ -85,11 +90,19 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
         PTE *pt = (PTE *)(dir_pte->PTE_uo.union_01.PPN_01 * PGSIZE);
 
         struct PTE *pt_pte = (struct PTE*)(pt + (va_page_index % PTE_NUM));
+        
+        if (0 == pt_pte->PTE_uo.union_01.V) {
+            pt_pte->PTE_uo.val = ((uint32_t)pa / PGSIZE) << RSW_DAGUXWRV_LEN;
+            // set DAGUXWRV
+            pt_pte->PTE_uo.val |= PTE_V;
+        } else {
+            printf("pt_pte: %x is mapped \n", (uint32_t)pt_pte);
+        }
 
-        assert(pt_pte->PTE_uo.union_01.V == 0);
-        pt_pte->PTE_uo.val = ((uint32_t)pa / PGSIZE) << RSW_DAGUXWRV_LEN;
-        // set DAGUXWRV
-        pt_pte->PTE_uo.val |= PTE_V;
+        if ((uint32_t)va >= 0x80102000 && (uint32_t)va <= 0x80103000) {
+            printf("(uint32_t)pt_pte:%x, (uint32_t)dir_pte:%x\n", (uint32_t)pt_pte, (uint32_t)dir_pte);
+            printf("pt_pte->PTE_uo.val:%x, dir_pte->PTE_uo.val:%x\n", pt_pte->PTE_uo.val, dir_pte->PTE_uo.val);
+        }
     } else {
         PTE* new_pt = (PTE*)(pgalloc_usr(PGSIZE));
        
