@@ -3,14 +3,14 @@
 static void *pf = NULL;
 
 void* new_page(size_t nr_page) {
-    void *result = (void *)((uintptr_t)pf + nr_page * PGSIZE);
+    void *result = pf;
     pf = (void *)((uintptr_t)pf + nr_page * PGSIZE);
     return result;
 }
 
 static inline void* pg_alloc(int bytes_num) {
     // AM make sure that n is always the multiple of PGSIZE
-    void *pg = (void *)((uintptr_t)pf + bytes_num);
+    void *pg = pf;
     memset(pg, 0, bytes_num);
     pf = (void *)((uintptr_t)pf + bytes_num);
     return pg;
