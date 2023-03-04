@@ -25,7 +25,14 @@ static void sh_prompt() {
 #define MAX_ARGS (32)
 
 static void sh_handle_cmd(const char *cmd) {
+    if (cmd == NULL) {
+        return;
+    }
+
     int32_t cmd_len = strlen(cmd);
+    if (cmd_len <= 1) {
+        return;
+    }
     char strip_cmd[cmd_len + 1];
     strcpy(strip_cmd, cmd);
     strip_cmd[cmd_len - 1] = '\0';
