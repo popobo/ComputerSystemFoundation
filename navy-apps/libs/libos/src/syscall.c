@@ -65,23 +65,16 @@ int _write(int fd, void *buf, size_t count) {
 }
 
 void *_sbrk(intptr_t increment) {
-    extern char end;
-    static uint32_t prbk = 0;
-    uint32_t old_prbk = 0;
-    if (0 == prbk) {
-        prbk = (uint32_t)&end;
-        _syscall_(SYS_brk, prbk, 0, 0);
-    } 
+    extern char _end;
+    static uint32_t prbk = (uint32_t)&_end;
     
-    old_prbk = prbk;
+    void *addr = (void *)prbk;
+    if (_syscall_(SYS_brk, prbk + increment, 0, 0) != 0) {
+        return (void *)-1;
+    }
+
     prbk += increment;
-
-    if (0 != _syscall_(SYS_brk, prbk, 0, 0)) {
-        prbk -= increment;
-        return (void*)-1;
-    } 
-
-    return (void *)old_prbk;
+    return addr;
 }
 
 int _read(int fd, void *buf, size_t count) {

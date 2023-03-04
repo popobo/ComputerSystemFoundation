@@ -36,6 +36,7 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     assert(ehdr.e_machine == EXPECT_TYPE);
     assert(ehdr.e_phoff != 0 && ehdr.e_phnum != 0xffff);
     
+    uint32_t va_end_ptr = 0;
     for (int i = 0; i < ehdr.e_phnum; ++i) {
         fs_lseek(fd, ehdr.e_phoff + sizeof(Elf_Phdr) * i, SEEK_SET);
         fs_read(fd, &phdr, sizeof(Elf_Phdr));
@@ -60,13 +61,34 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
             unload_filesz -= read_len;
 
             if (load_len < PGSIZE) {
+                va_end_ptr = (uint32_t)va + load_len;
                 memset((void *)((uint32_t)pa + load_len), 0, PGSIZE - load_len);
             }
 
             // map va to pa
             map(&(pcb->as), va, pa, 0);
         }
+        
+        uint32_t original_unload_memsz = phdr.p_memsz - phdr.p_filesz;
+        uint32_t unload_memsz = original_unload_memsz;
+        while (unload_memsz > 0) {
+            void *va = (void *)(va_end_ptr + (original_unload_memsz - unload_memsz));
+            void *pa = new_page(1);
+            memset(pa, 0, PGSIZE);
+            
+            uint32_t load_len = unload_memsz > PGSIZE ? PGSIZE : unload_memsz;
+            unload_memsz -= load_len;
+
+            if (load_len < PGSIZE) {
+                va_end_ptr = (uint32_t)va + load_len;        
+            }
+
+            map(&(pcb->as), va, pa, 0);
+        }
+
     }
+    
+    pcb->max_brk = va_end_ptr;
 
     fs_close(fd);
 
@@ -94,10 +116,10 @@ int32_t context_uload(PCB *pcb, const char *filename, char *const argv[], char *
     protect(&(pcb->as));
     printf("pcb->as.ptr:%x\n", (uint32_t)pcb->as.ptr);
 
-    uintptr_t ustack_top = (uintptr_t)new_page(USER_STACK_PAGES);
-    
+    uintptr_t ustack_top_origin = (uintptr_t)new_page(USER_STACK_PAGES);
+    uintptr_t ustack_top = ustack_top_origin;
     for (int i = USER_STACK_PAGES; i > 0; --i) {
-        map(&(pcb->as), (void *)((uint32_t)pcb->as.area.end - i * PGSIZE), (void *)(ustack_top - i * PGSIZE), 0);
+        map(&(pcb->as), (void *)((uint32_t)pcb->as.area.end - i * PGSIZE), (void *)(ustack_top - i * PGSIZE), 1);
     }
 
     size_t argv_num = 0;
@@ -155,8 +177,9 @@ int32_t context_uload(PCB *pcb, const char *filename, char *const argv[], char *
     kstack.end = (void *)&pcb->stack[STACK_SIZE];
 
     pcb->cp = ucontext(&(pcb->as), kstack, (void *)entry);
-    pcb->cp->GPRx = ustack_top; // ustack.end
-    
+    // user stack should be in virtual address space
+    pcb->cp->GPRx = (uint32_t)pcb->as.area.end - (ustack_top_origin - ustack_top); // ustack.end
+
     return 0;
 }
 

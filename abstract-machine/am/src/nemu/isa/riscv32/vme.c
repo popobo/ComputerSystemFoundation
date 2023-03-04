@@ -79,6 +79,8 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
     uint32_t va_page_dir_index = va_page_index  >> VPN_LEN;
 
     PTE *pg_dir = (PTE *)as->ptr;
+    assert(pg_dir != NULL);
+
     struct PTE *dir_pte = (struct PTE *)(pg_dir + va_page_dir_index);
     if (dir_pte != NULL && 1 == dir_pte->PTE_uo.union_01.V) {
         

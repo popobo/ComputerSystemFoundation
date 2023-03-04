@@ -21,26 +21,25 @@ void free_page(void *p) {
   panic("not implement yet");
 }
 
-int mm_brk(uintptr_t brk) {
-    if (current->max_brk == 0) {
-        current->max_brk = brk;
-        return 0;
-    }
+int mm_brk(uintptr_t brk) {    
+    // printf("brk:%x, current->max_brk:%x\n", brk, current->max_brk);
+    assert(brk >= current->max_brk);
 
     uint32_t alloc_size = brk - current->max_brk;
     // how to allocate physical address
-    uint32_t paup = (uint32_t)pg_alloc(alloc_size);
-    uint32_t padown = paup + alloc_size;
+    uint32_t pa_begin = (uint32_t)pg_alloc(alloc_size);
+    uint32_t pa_end = pa_begin + alloc_size;
 
-    uint32_t vaup = (uint32_t)current->max_brk;
-    uint32_t vadown = (uint32_t)brk;
+    uint32_t va_begin = (uint32_t)current->max_brk;
+    // uint32_t va_end = (uint32_t)brk;
 
-    printf("paup:%x, padown:%x, vaup:%x, vadown:%x\n", paup, padown, vaup, vadown);
-
-    while (padown <= paup) {
-        map(&(current->as), (void *)vadown, (void *)padown, 1);
-        vadown += PGSIZE;
-        padown += PGSIZE;
+    
+    while (pa_begin <= pa_end) {
+        //printf("pa_begin:%x, pa_end:%x, va_begin:%x, va_end:%x\n", pa_begin, pa_end, va_begin, va_end);
+        //printf("current:%x\n", (uint32_t)current);
+        map(&(current->as), (void *)va_begin, (void *)pa_begin, 0);
+        va_begin += PGSIZE;
+        pa_begin += PGSIZE;
     }
 
     current->max_brk = brk;

@@ -18,10 +18,9 @@ void switch_boot_pcb() {
 void hello_fun(void *arg) {
     int j = 1;
     while (1) {
-        if (j % 1000000 == 0) {
+        // if (j % 1000000 == 0) {
             Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", (uintptr_t)arg, j);
-        }
-        
+        // }
         j ++;
         yield();
     }
@@ -30,18 +29,20 @@ void hello_fun(void *arg) {
 void init_proc() {
     char *argv[] = { "/bin/dummy", NULL };
     context_uload(&pcb[0], "/bin/dummy", argv, NULL);
-    printf("pcb[0].cp->pdir:%x\n", pcb[0].cp->pdir);
-    context_uload(&pcb[1], "/bin/dummy", argv, NULL);
-    printf("pcb[1].cp->pdir:%x\n", pcb[1].cp->pdir);
+    printf("init_proc pcb[1].as.ptr:%x, (uint32_t)pcb[1].cp:%x\n", pcb[1].as.ptr, (uint32_t)pcb[1].cp);
     switch_boot_pcb();
 }
 
 Context* schedule(Context *prev) {
+    // printf("schedule pcb[0].as.ptr:%x, pcb[0].cp->pdir:%x\n", pcb[0].as.ptr, pcb[0].cp->pdir);
     // save the context pointer, what is prev
+    
     current->cp = prev;
-
+    // printf("schedule 1 current:%x, current->as.ptr:%x\n", (uint32_t)current, (uint32_t)current->as.ptr);
     current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
 
+    // printf("schedule 2 current:%x, current->as.ptr:%x, current->cp:%x, &current->cp:%x\n", (uint32_t)current, (uint32_t)current->as.ptr, (uint32_t)current->cp, &(current->cp));
+    // printf("schedule 3 pcb[1].as.ptr:%x, (uint32_t)pcb[1].cp:%x\n", (uint32_t)pcb[1].as.ptr, (uint32_t)pcb[1].cp);
     // then return the new context
     return current->cp;
 }
