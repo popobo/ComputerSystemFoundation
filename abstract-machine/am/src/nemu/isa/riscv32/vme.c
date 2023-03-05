@@ -102,6 +102,7 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
+    assert(as != NULL);
     assert(kstack.end != NULL && kstack.start != NULL);
 
     Context * cp = (Context *)((uintptr_t)kstack.end - sizeof(Context));
@@ -112,5 +113,7 @@ Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
         cp->gpr[i] = 0;
     }
 
+    // set pdir as the page directory
+    cp->pdir = as->ptr;
     return cp;
 }

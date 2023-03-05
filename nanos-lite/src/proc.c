@@ -28,9 +28,8 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-    context_kload(&pcb[0], hello_fun, "hello!");
-    char *argv[] = { "/bin/nterm", NULL };
-    context_uload(&pcb[1], "/bin/nterm", argv, NULL);
+    char *argv[] = { "/bin/dummy", NULL };
+    context_uload(&pcb[0], "/bin/dummy", argv, NULL);
     switch_boot_pcb();
 }
 
@@ -38,7 +37,7 @@ Context* schedule(Context *prev) {
     // save the context pointer, what is prev
     current->cp = prev;
 
-    current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
+    current = &pcb[0];
 
     // then return the new context
     return current->cp;
