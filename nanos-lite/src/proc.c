@@ -28,8 +28,8 @@ void hello_fun(void *arg) {
 }
 
 void init_proc() {
-    char *argv[] = { "/bin/dummy", NULL };
-    context_uload(&pcb[0], "/bin/dummy", argv, NULL);
+    char *argv[] = { "/bin/bird", NULL };
+    context_uload(&pcb[0], "/bin/bird", argv, NULL);
     switch_boot_pcb();
 }
 

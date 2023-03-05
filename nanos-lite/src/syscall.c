@@ -9,6 +9,7 @@ extern PCB *current;
 void switch_boot_pcb();
 void naive_uload(PCB *pcb, const char *filename);
 int32_t context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]);
+int mm_brk(uintptr_t brk);
 
 void do_syscall(Context *c) {
     uintptr_t a[4];
@@ -52,7 +53,7 @@ void do_syscall(Context *c) {
             c->epc += 4;
             break;
         case SYS_brk:
-            c->GPRx = 0;
+            c->GPRx =mm_brk(a[1]);
             c->epc += 4;
             break;
         case SYS_gettimeofday: {
