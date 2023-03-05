@@ -96,6 +96,17 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     return ehdr.e_entry;
 }
 
+void context_kload(PCB *pcb, void (*entry)(void *), void *arg) {
+    assert(pcb != NULL);
+    assert(entry != NULL);
+
+    Area kstack;
+    kstack.start = (void *)&pcb->stack[0];
+    kstack.end = (void *)&pcb->stack[STACK_SIZE];
+
+    pcb->cp = kcontext(kstack, entry, arg);
+}
+
 int32_t context_uload(PCB *pcb, const char *filename, char *const argv[], char *const envp[]) {
     assert(pcb != NULL);
     assert(filename != NULL);

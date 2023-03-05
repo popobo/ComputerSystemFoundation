@@ -51,6 +51,7 @@ void do_syscall(Context *c) {
         case SYS_close:
             c->GPRx = fs_close(a[1]);
             c->epc += 4;
+            // Remember , miss a break here
             break;
         case SYS_brk:
             c->GPRx =mm_brk(a[1]);
