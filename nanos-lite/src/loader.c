@@ -68,7 +68,8 @@ int32_t context_uload(PCB *pcb, const char *filename, char *const argv[], char *
     assert(filename != NULL);
 
     // use heap.end as the stack top of user process, and put it in GPRx according to the convention
-    uintptr_t ustack_top = (uintptr_t)new_page(USER_STACK_PAGES);
+    uint32_t ustack_begin = (uint32_t)new_page(USER_STACK_PAGES);
+    uint32_t ustack_top = ustack_begin += USER_STACK_PAGES;
     size_t argv_num = 0;
     size_t envp_num = 0;
     size_t str_len = 0;
