@@ -27,6 +27,13 @@ static inline def_EHelper(csrrw_sstatus) {
     cpu.sstatus = *dsrc1;
 }
 
+static inline def_EHelper(csrrw_satp) {
+    if (id_dest->reg != 0) {
+        *ddest = cpu.satp;
+    }
+    cpu.satp = *dsrc1;
+}
+
 static inline def_EHelper(csrrs_stvec) {
     *ddest = cpu.stvec;
     if (id_src1->reg != 0) {
@@ -52,6 +59,13 @@ static inline def_EHelper(csrrs_sstatus) {
     *ddest = cpu.sstatus;
     if (id_src1->reg != 0) {
         cpu.sstatus &= (~*dsrc1);
+    }
+}
+
+static inline def_EHelper(csrrs_satp) {
+    *ddest = cpu.satp;
+    if (id_src1->reg != 0) {
+        cpu.satp &= (~*dsrc1);
     }
 }
 

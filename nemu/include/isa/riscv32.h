@@ -14,12 +14,12 @@ typedef struct {
         rtlreg_t _32;
     } gpr[32];
 
-    // according to trap.S
     vaddr_t pc;
     rtlreg_t sepc;
     rtlreg_t scause;
     rtlreg_t stvec;
     rtlreg_t sstatus;
+    rtlreg_t satp;
 } riscv32_CPU_state;
 
 // decode
@@ -81,7 +81,7 @@ typedef struct {
   } instr;
 } riscv32_ISADecodeInfo;
 
-#define isa_vaddr_check(vaddr, type, len) (MEM_RET_OK)
+// #define isa_vaddr_check(vaddr, type, len) (MEM_RET_OK)
 #define riscv32_has_mem_exception() (false)
 
 #endif

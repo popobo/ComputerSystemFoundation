@@ -119,6 +119,7 @@ static inline def_EHelper(csrrw) {
     EX(0x105, csrrw_stvec)
     EX(0x141, csrrw_sepc)
     EX(0x142, csrrw_scause)
+    EX(0x180, csrrw_satp)
     default: exec_inv(s);
     }
 }
@@ -130,8 +131,8 @@ static inline def_EHelper(csrrs) {
     EX(0x105, csrrs_stvec)
     EX(0x141, csrrs_sepc)
     EX(0x142, csrrs_scause)
-    default:
-        break;
+    EX(0x180, csrrs_satp)
+    default: exec_inv(s);
     }
 }
 
@@ -148,34 +149,10 @@ static inline def_EHelper(csrr) {
     }
 }
 
-// cpu.pc:0x830004bc, s->isa.instr.val:0x50413
-// cpu.pc:0x830004c0, s->isa.instr.val:0x2097
-// cpu.pc:0x830004c4, s->isa.instr.val:0xb0c080e7 // 1011 0000 1100 00001  000  00001  1100111
-// cpu.pc:0x82ffffd4, s->isa.instr.val:0x17f6bb15
 
 static inline void fetch_decode_exec(DecodeExecState *s) {
-    // fetch instruction
-    // pc is 4 bytes(32bits)
-    // val is the same as opcode1_0 because of union
+
     s->isa.instr.val = instr_fetch(&s->seq_pc, 4);
-    // if (cpu.pc > 0x83000000) {
-    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    // }
-
-    // if (cpu.pc == 0x80101534) {
-    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    // }
-    // // 83007abc <_exit>:
-    // // 83007abc:	00000893          	li	a7,0
-    // if (cpu.pc == 0x83007abc) {
-    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    // }
-
-    // // 83007aa4 <_syscall_>:
-    // // 83007aa4:	00050893          	mv	a7,a0
-    // if (cpu.pc == 0x83007aa4) {
-    //     printf("cpu.pc:0x%x, s->isa.instr.val:0x%x\n", cpu.pc, s->isa.instr.val);
-    // }
 
     Assert(s->isa.instr.i.opcode1_0 == 0x3, "Invalid instruction");
     switch (s->isa.instr.i.opcode6_2) {

@@ -66,6 +66,39 @@ void __am_switch(Context *c) {
 }
 
 void map(AddrSpace *as, void *va, void *pa, int prot) {
+    assert(as != NULL);
+
+    uint32_t va_page_index = (uintptr_t)va / PGSIZE;
+    uint32_t va_page_dir_index = va_page_index  >> VPN_LEN;
+
+    PTE *pg_dir = (PTE *)as->ptr;
+    assert(pg_dir != NULL);
+
+    struct PTE *dir_pte = (struct PTE *)(pg_dir + va_page_dir_index);
+    if (dir_pte != NULL && 1 == dir_pte->PTE_uo.union_01.V) {
+        
+        PTE *pt = (PTE *)(dir_pte->PTE_uo.union_01.PPN_01 * PGSIZE);
+
+        struct PTE *pt_pte = (struct PTE*)(pt + (va_page_index % PTE_NUM));
+        
+        if (0 == pt_pte->PTE_uo.union_01.V) {
+            pt_pte->PTE_uo.val = ((uint32_t)pa / PGSIZE) << RSW_DAGUXWRV_LEN;
+            // set DAGUXWRV
+            pt_pte->PTE_uo.val |= PTE_V;
+        } else {
+            printf("pt_pte: %x is mapped \n", (uint32_t)pt_pte);
+        }
+    } else {
+        PTE* new_pt = (PTE*)(pgalloc_usr(PGSIZE));
+       
+        struct PTE *pt_pte = (struct PTE*)(new_pt + (va_page_index % PTE_NUM));
+        pt_pte->PTE_uo.val = ((uint32_t)pa / PGSIZE) << RSW_DAGUXWRV_LEN;
+        // set DAGUXWRV
+        pt_pte->PTE_uo.val |= PTE_V;
+    
+        dir_pte->PTE_uo.val = ((uint32_t)new_pt / PGSIZE) << RSW_DAGUXWRV_LEN;
+        dir_pte->PTE_uo.val |= PTE_V;
+    }
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
