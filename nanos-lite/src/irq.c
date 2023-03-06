@@ -10,8 +10,6 @@ static Context* do_event(Event e, Context* c) {
         // Rmember another miss of break
         break;
     case EVENT_YIELD:
-        c = schedule(c);
-        break;
     case EVENT_IRQ_TIMER:
         c = schedule(c);
         break;
