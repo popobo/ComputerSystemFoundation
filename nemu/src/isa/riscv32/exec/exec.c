@@ -120,6 +120,7 @@ static inline def_EHelper(csrrw) {
     EX(0x141, csrrw_sepc)
     EX(0x142, csrrw_scause)
     EX(0x180, csrrw_satp)
+    EX(0x340, csrrw_mscratch)
     default: exec_inv(s);
     }
 }
@@ -132,6 +133,7 @@ static inline def_EHelper(csrrs) {
     EX(0x141, csrrs_sepc)
     EX(0x142, csrrs_scause)
     EX(0x180, csrrs_satp)
+    EX(0x340, csrrs_mscratch)
     default: exec_inv(s);
     }
 }

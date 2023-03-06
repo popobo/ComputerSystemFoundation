@@ -1,72 +1,67 @@
-static inline def_EHelper(csrrw_stvec) {
+static inline def_rtl(cssrw, rtlreg_t *csr) {
+    rtlreg_t initial_r1 = *dsrc1;
     if (id_dest->reg != 0) {
-        *ddest = cpu.stvec;
+        *ddest = *csr;
     }
-    cpu.stvec = *dsrc1;
+    *csr = initial_r1;
+}
+
+static inline def_rtl(cssrs, rtlreg_t *csr) {
+    rtlreg_t initial_r1 = *dsrc1;
+    *ddest = *csr;
+    if (id_src1->reg != 0) {
+        *csr &= (~initial_r1);
+    }
+}
+
+static inline def_EHelper(csrrw_stvec) {
+    rtl_cssrw(s, &cpu.stvec);
 }
 
 static inline def_EHelper(csrrw_sepc) {
-    
-    if (id_dest->reg != 0) {
-        *ddest = cpu.sepc;
-    }
-    cpu.sepc = *dsrc1;
+    rtl_cssrw(s, &cpu.sepc);
 }
 
 static inline def_EHelper(csrrw_scause) {
-    if (id_dest->reg != 0) {
-        *ddest = cpu.scause;
-    }
-    cpu.scause = *dsrc1;
+    rtl_cssrw(s, &cpu.scause);
 }
 
 static inline def_EHelper(csrrw_sstatus) {
-    if (id_dest->reg != 0) {
-        *ddest = cpu.sstatus;
-    }
-    cpu.sstatus = *dsrc1;
+    rtl_cssrw(s, &cpu.sstatus);
 }
 
 static inline def_EHelper(csrrw_satp) {
-    if (id_dest->reg != 0) {
-        *ddest = cpu.satp;
-    }
-    cpu.satp = *dsrc1;
+    rtl_cssrw(s, &cpu.satp);
+}
+
+// csrrw rd, csr, rs1
+// csrrw sp, mscratch, sp -> exchange sp and mascratch
+static inline def_EHelper(csrrw_mscratch) {
+    rtl_cssrw(s, &cpu.mscratch);
 }
 
 static inline def_EHelper(csrrs_stvec) {
-    *ddest = cpu.stvec;
-    if (id_src1->reg != 0) {
-        cpu.stvec &= (~*dsrc1);
-    }
+    rtl_cssrs(s, &cpu.stvec);
 }
 
 static inline def_EHelper(csrrs_sepc) {
-    *ddest = cpu.sepc;
-    if (id_src1->reg != 0) {
-        cpu.sepc &= (~*dsrc1);
-    }
+    rtl_cssrs(s, &cpu.sepc);
 }
 
 static inline def_EHelper(csrrs_scause) {
-    *ddest = cpu.scause;
-    if (id_src1->reg != 0) {
-        cpu.scause &= (~*dsrc1);
-    }
+    rtl_cssrs(s, &cpu.scause);
 }
 
 static inline def_EHelper(csrrs_sstatus) {
-    *ddest = cpu.sstatus;
-    if (id_src1->reg != 0) {
-        cpu.sstatus &= (~*dsrc1);
-    }
+    rtl_cssrs(s, &cpu.sstatus);
 }
 
 static inline def_EHelper(csrrs_satp) {
-    *ddest = cpu.satp;
-    if (id_src1->reg != 0) {
-        cpu.satp &= (~*dsrc1);
-    }
+    rtl_cssrs(s, &cpu.satp);
+}
+
+static inline def_EHelper(csrrs_mscratch) {
+    rtl_cssrs(s, &cpu.mscratch);
 }
 
 #define ENV_CALL_S (9)
