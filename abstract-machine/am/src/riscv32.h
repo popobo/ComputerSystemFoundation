@@ -25,6 +25,10 @@ static inline void outl(uintptr_t addr, uint32_t data) { *(volatile uint32_t *)a
 #define PTE_NUM (1024)
 #define SATP_PPN_LEN (22)
 
+// sstatus
+#define SPIE 0b10000
+#define SIE 0b10
+
 struct PTE {
     union {
         struct {

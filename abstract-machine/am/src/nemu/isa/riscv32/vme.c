@@ -107,7 +107,7 @@ Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
 
     Context * cp = (Context *)((uintptr_t)kstack.end - sizeof(Context));
     cp->epc = (uintptr_t)entry;
-    cp->status = 0xc0100; //For DiffTest
+    cp->status = SIE;
     cp->cause = 0;
     for (int i = 0; i < sizeof(cp->gpr) / sizeof(cp->gpr[0]); ++i) {
         cp->gpr[i] = 0;

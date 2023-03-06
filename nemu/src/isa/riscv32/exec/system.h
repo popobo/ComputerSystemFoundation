@@ -69,19 +69,21 @@ static inline def_EHelper(csrrs_satp) {
     }
 }
 
-#ifdef DIFF_TEST
-void difftest_skip_dut(int nr_ref, int nr_dut);
-#endif
+#define ENV_CALL_S (9)
+
 static inline def_EHelper(ecall) {
     void raise_intr(DecodeExecState *s, word_t NO, vaddr_t epc);
     // 9 Environment call from S-mode
-    raise_intr(s, 9, cpu.stvec);
-#ifdef DIFF_TEST
-    difftest_skip_dut(1, 2);
-#endif
+    raise_intr(s, ENV_CALL_S, cpu.stvec);
 }
 
 static inline def_EHelper(sret) {
     s->is_jmp = true;
     s->jmp_pc = cpu.sepc;
+    
+    uint32_t spie = cpu.sstatus & SPIE;
+    // set sie spie
+    cpu.sstatus = (spie == SPIE) ? (cpu.sstatus | SIE) : (cpu.sstatus & SIE);
+    // set pie 1
+    cpu.sstatus = cpu.sstatus | SPIE;
 }

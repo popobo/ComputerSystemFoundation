@@ -9,6 +9,10 @@
 
 // reg
 
+// sstatus
+#define SPIE 0b10000
+#define SIE 0b10
+
 typedef struct {
     struct {
         rtlreg_t _32;
@@ -20,6 +24,7 @@ typedef struct {
     rtlreg_t stvec;
     rtlreg_t sstatus;
     rtlreg_t satp;
+    bool INTR;
 } riscv32_CPU_state;
 
 // decode

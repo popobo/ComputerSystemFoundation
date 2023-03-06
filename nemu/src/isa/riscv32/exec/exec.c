@@ -175,6 +175,8 @@ static inline void reset_zero() {
   reg_l(0) = 0;
 }
 
+void query_intr(DecodeExecState *s);
+
 vaddr_t isa_exec_once() {
   DecodeExecState s;
   s.is_jmp = 0;
@@ -184,6 +186,8 @@ vaddr_t isa_exec_once() {
   update_pc(&s);
 
   reset_zero();
+
+  query_intr(&s);
 
   return s.seq_pc;
 }
