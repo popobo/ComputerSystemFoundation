@@ -37,7 +37,8 @@ Context* schedule(Context *prev) {
     current->cp = prev;
 
     current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
-
+    current->cp->pdir = current == &pcb[0] ? NULL : current->cp->pdir;
+    
     // then return the new context
     return current->cp;
 }
