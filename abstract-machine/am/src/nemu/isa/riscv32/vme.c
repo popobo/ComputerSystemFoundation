@@ -115,5 +115,8 @@ Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
 
     // set pdir as the page directory
     cp->pdir = as->ptr;
+    // set np as user
+    cp->np = 1;
+
     return cp;
 }

@@ -179,6 +179,7 @@ int32_t context_uload(PCB *pcb, const char *filename, char *const argv[], char *
     kstack.start = (void *)&pcb->stack[0];
     kstack.end = (void *)&pcb->stack[STACK_SIZE];
     pcb->cp = ucontext(&(pcb->as), kstack, (void *)entry);
+    // set a[0] the stack tops
     pcb->cp->GPRx = (uint32_t)pcb->as.area.end - (ustack_end - ustack_top);
 
     return 0;

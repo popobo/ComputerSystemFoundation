@@ -36,10 +36,10 @@ Context* __am_irq_handle(Context *c) {
 bool cte_init(Context*(*handler)(Event, Context*)) {
   // initialize exception entry
   asm volatile("csrw stvec, %0" : : "r"(__am_asm_trap));
-
+  
   // register event handler
   user_handler = handler;
-
+  asm volatile("csrrw t0, mscratch, t0; li t0, 0; csrrw t0, mscratch, t0");
   return true;
 }
 
@@ -55,6 +55,7 @@ Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
     }
     cp->gpr[10] = (uintptr_t)arg;
     cp->pdir = NULL;
+    cp->np = 0;
 
     return cp;
 }

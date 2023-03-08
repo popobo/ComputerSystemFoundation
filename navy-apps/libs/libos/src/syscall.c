@@ -68,7 +68,7 @@ void *_sbrk(intptr_t increment) {
     extern char _end;
     static uint32_t prbk = (uint32_t)&_end;
 
-    void *addr = prbk;
+    void *addr = (void *)prbk;
 
     if (0 != _syscall_(SYS_brk, prbk + increment, 0, 0)) {
         return (void*)-1;
