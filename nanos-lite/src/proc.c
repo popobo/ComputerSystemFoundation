@@ -30,6 +30,8 @@ void init_proc() {
     // context_kload(&pcb[0], hello_fun, "wwwwwwwwwwwww");
     char *argv[] = { "/bin/bird", NULL };
     context_uload(&pcb[0], "/bin/bird", argv, NULL);
+    char *argv2[] = { "/bin/nterm", NULL };
+    context_uload(&pcb[1], "/bin/nterm", argv2, NULL);
     switch_boot_pcb();
 }
 
@@ -39,7 +41,7 @@ Context* schedule(Context *prev) {
 
     current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
     // current->cp->pdir = current == &pcb[0] ? NULL : current->cp->pdir;
-    printf("schedule: current:%x, current->cp:%x\n", current, current->cp);
+    // printf("schedule: current:%x, current->cp:%x\n", current, current->cp);
     // then return the new context
     return current->cp;
 }
